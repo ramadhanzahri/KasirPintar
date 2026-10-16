@@ -74,8 +74,12 @@
                     <a href="/kasir/pengaturan" data-path="kasir/pengaturan" class="nav-link flex items-center gap-3 px-3 py-3 rounded-2xl text-sm text-slate-300"><span class="nav-icon w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-slate-300"><i class="fa-solid fa-gear"></i></span><span>Pengaturan Akun</span></a>
                 </div>
             </div>
-            <div class="px-3">
-                <a href="/login" class="flex items-center gap-3 px-3 py-3 rounded-2xl text-sm text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-400/20 transition"><i class="fa-solid fa-right-from-bracket w-9 h-9 rounded-xl bg-rose-500/10 flex items-center justify-center"></i><span>Login</span></a>
+            <div class="px-3 space-y-2">
+                <?php if (session()->get('isLoggedIn')): ?>
+                    <a href="<?= base_url('logout') ?>" class="flex items-center gap-3 px-3 py-3 rounded-2xl text-sm text-rose-300 hover:bg-rose-500/10 border border-transparent hover:border-rose-400/20 transition"><i class="fa-solid fa-right-from-bracket w-9 h-9 rounded-xl bg-rose-500/10 flex items-center justify-center"></i><span>Logout (<?= esc(session()->get('username')) ?>)</span></a>
+                <?php else: ?>
+                    <a href="<?= base_url('auth') ?>" class="flex items-center gap-3 px-3 py-3 rounded-2xl text-sm text-sky-300 hover:bg-sky-500/10 border border-transparent hover:border-sky-400/20 transition"><i class="fa-solid fa-right-to-bracket w-9 h-9 rounded-xl bg-sky-500/10 flex items-center justify-center"></i><span>Login</span></a>
+                <?php endif; ?>
             </div>
         </nav>
     </aside>
@@ -96,12 +100,20 @@
                     </div>
                     <div class="flex items-center gap-3 px-3 py-2.5 rounded-2xl bg-white/[.03] border border-white/10">
                         <div class="w-10 h-10 rounded-full bg-gradient-to-br from-neon-blue via-neon-cyan to-neon-purple p-[2px]"><div class="w-full h-full rounded-full bg-dark-950 flex items-center justify-center"><i class="fa-solid fa-user text-slate-300 text-sm"></i></div></div>
-                        <div class="hidden sm:block text-left"><p class="text-sm font-semibold text-white leading-tight">Demo User</p><p class="text-[11px] text-slate-400">Front-end</p></div>
+                        <div class="hidden sm:block text-left"><p class="text-sm font-semibold text-white leading-tight"><?= esc(session()->get('nama_lengkap') ?? 'Demo User') ?></p><p class="text-[11px] text-slate-400"><?= esc(session()->get('role') ?? 'Frontend') ?></p></div>
+                        <?php if (session()->get('isLoggedIn')): ?>
+                            <a href="<?= base_url('logout') ?>" class="hidden sm:flex w-8 h-8 rounded-xl bg-rose-500/10 hover:bg-rose-500/20 text-rose-300 items-center justify-center" title="Logout"><i class="fa-solid fa-right-from-bracket text-xs"></i></a>
+                        <?php endif; ?>
                     </div>
                 </div>
             </div>
         </header>
         <main class="flex-1 px-4 lg:px-7 py-6">
+            <?php if (session()->getFlashdata('msg')): ?>
+                <div class="mb-6 p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-300 text-sm font-bold flex items-center gap-3">
+                    <i class="fa-solid fa-check-circle"></i> <?= esc(session()->getFlashdata('msg')) ?>
+                </div>
+            <?php endif; ?>
             <?= $this->renderSection('content') ?>
         </main>
         <footer class="px-4 lg:px-7 py-5 border-t border-white/10 text-center md:text-left">

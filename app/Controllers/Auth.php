@@ -30,32 +30,26 @@ class Auth extends BaseController
 
         if ($user) {
             if (! ($user['is_active'] ?? 1)) {
-                $session->setFlashdata('msg', 'Akun Anda dinonaktifkan. Hubungi admin.');
+                $session->setFlashdata('msg', 'Akun Anda dinonaktifkan.');
                 return redirect()->to('/auth');
             }
 
             if (password_verify($password, $user['password'])) {
-                
-                $sessionData = [
+                $session->set([
                     'id'           => $user['id'],
                     'nama_lengkap' => $user['nama_lengkap'],
                     'username'     => $user['username'],
                     'role'         => $user['role'],
                     'isLoggedIn'   => true,
-                ];
-                $session->set($sessionData);
-
-                $path = $user['role'] === 'superadmin' ? 'admin/dashboard' : 'kasir/pos';
-                return redirect()->to($path);
-                
-            } else {
-                $session->setFlashdata('msg', 'Password salah.');
-                return redirect()->to('/auth');
+                ]);
+                $session->setFlashdata('msg', 'Login berhasil!');
+                return redirect()->to($user['role'] === 'superadmin' ? 'admin/dashboard' : 'kasir/pos');
             }
+            $session->setFlashdata('msg', 'Password salah.');
         } else {
             $session->setFlashdata('msg', 'Username tidak ditemukan.');
-            return redirect()->to('/auth');
         }
+        return redirect()->to('/auth');
     }
 
     public function logout()
