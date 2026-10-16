@@ -3,11 +3,16 @@
 use CodeIgniter\Router\RouteCollection;
 
 /** @var RouteCollection $routes */
-$routes->setAutoRoute(false);
-$routes->get('/', 'Frontend::login');
-$routes->get('login', 'Frontend::login');
-$routes->get('auth', 'Frontend::login');
-$routes->get('logout', 'Frontend::login');
+
+/*
+|--------------------------------------------------------------------------
+| Authentication
+|--------------------------------------------------------------------------
+*/
+$routes->get('/', 'Auth::index');
+$routes->get('auth', 'Auth::index');
+$routes->post('auth/login', 'Auth::login');
+$routes->get('logout', 'Auth::logout');
 
 $routes->get('admin/dashboard', 'Frontend::adminDashboard');
 $routes->get('admin/menu', 'Frontend::adminMenu');
