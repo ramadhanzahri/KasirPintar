@@ -13,7 +13,7 @@ class Frontend extends BaseController
     public function adminRiwayat() { return view('admin/riwayat'); }
     public function adminRiwayatStok() { return view('admin/riwayat_stok/index'); }
     public function adminPengaturan() { return view('admin/pengaturan/index'); }
-    public function kasirDashboard() { return view('kasir/dashboard'); }
+    public function kasirDashboard() { return view('kasir/pos'); }
     public function kasirPos() { return view('kasir/pos'); }
     public function kasirRiwayat() { return view('kasir/riwayat'); }
     public function kasirPengaturan() { return view('kasir/pengaturan'); }

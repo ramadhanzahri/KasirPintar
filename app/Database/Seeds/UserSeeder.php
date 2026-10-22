@@ -26,8 +26,6 @@ class UserSeeder extends Seeder
                 'updated_at'   => date('Y-m-d H:i:s'),
             ],
         ];
-
-        // Memasukkan data secara sekaligus ke tabel users
         $this->db->table('tb_user')->insertBatch($data);
     }
 }
