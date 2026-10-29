@@ -63,12 +63,12 @@ class Pos extends BaseController
             ->selectSum('total_harga')
             ->where('updated_at >=', $startTime)
             ->where('updated_at <=', $endTime)
-            ->where('status', 'selesai')
+            ->where('status_pembayaran', 'selesai')
             ->first();
         $pendapatan = $pendapatan_row['total_harga'] ?? 0;
 
         $totalSelesai = $this->pesananModel
-            ->where('status', 'selesai')
+            ->where('status_pembayaran', 'selesai')
             ->where('updated_at >=', $startTime)
             ->where('updated_at <=', $endTime)
             ->countAllResults();
@@ -237,7 +237,7 @@ class Pos extends BaseController
             'uang_bayar'        => $finalUangBayar,
             'kembalian'         => $kembalian,
             'catatan'           => $catatan !== '' ? $catatan : null,
-            'status'            => 'pending',
+            'status_pembayaran'   => 'pending',
             'metode_pembayaran' => $metodePembayaran,
             'kasir_id'          => $kasirId > 0 ? $kasirId : null,
             'kasir_nama'        => $kasirNama !== '' ? $kasirNama : null,
@@ -289,6 +289,4 @@ class Pos extends BaseController
             ]
         ]);
     }
-
-
 }
