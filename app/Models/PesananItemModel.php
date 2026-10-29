@@ -44,7 +44,7 @@ class PesananItemModel extends Model
     protected $beforeDelete   = [];
     protected $afterDelete    = [];
 
-    public function getPesanan(string $kode_pesanan): array
+    public function getByPesanan(string $kode_pesanan): array
     {
         return $this->where('kode_pesanan', $kode_pesanan)->findAll();
     }
