@@ -48,7 +48,8 @@
         </div>
     <?php endif; ?>
 
-    <div class="rounded-[1.7rem] border border-white/10 bg-white/[.035] backdrop-blur shadow-soft overflow-hidden">
+    <!-- TAB 1: DATA MENU -->
+    <div class="rounded-[1.7rem] border border-white/10 bg-white/[.035] backdrop-blur shadow-soft overflow-hidden" id="section-menu">
         <div class="p-5 lg:p-6 border-b border-white/10 flex items-center justify-between gap-4">
             <div>
                 <h2 class="text-lg font-extrabold text-white">Data Menu</h2>
@@ -57,11 +58,16 @@
                 </p>
             </div>
 
-            <div class="hidden sm:flex items-center gap-2 rounded-2xl bg-white/[.04] border border-white/10 px-4 py-2">
-                <i class="fa-solid fa-database text-slate-500 text-xs"></i>
-                <span class="text-xs font-semibold text-slate-400">
-                    <?= number_format(count($menus ?? []), 0, ',', '.') ?> Data
-                </span>
+            <div class="flex items-center gap-2">
+                <div class="hidden sm:flex items-center gap-2 rounded-2xl bg-white/[.04] border border-white/10 px-4 py-2">
+                    <i class="fa-solid fa-database text-slate-500 text-xs"></i>
+                    <span class="text-xs font-semibold text-slate-400">
+                        <?= number_format(count($menus ?? []), 0, ',', '.') ?> Data
+                    </span>
+                </div>
+                <button onclick="switchTab('stok')" class="flex items-center gap-2 rounded-2xl bg-sky-500 hover:bg-sky-600 px-4 py-2 text-xs font-bold text-white transition shadow-glow">
+                    <i class="fa-solid fa-box"></i> Pengisian Stok
+                </button>
             </div>
         </div>
 
@@ -129,11 +135,10 @@
                 </tbody>
             </table>
         </div>
-
-        </div>
     </div>
 
-    <div class="rounded-[1.7rem] border border-white/10 bg-white/[.035] backdrop-blur shadow-soft overflow-hidden">
+    <!-- TAB 2: PENGISIAN STOK MENU -->
+    <div class="rounded-[1.7rem] border border-white/10 bg-white/[.035] backdrop-blur shadow-soft overflow-hidden hidden" id="section-stok">
         <div class="p-5 lg:p-6 border-b border-white/10 flex items-center justify-between gap-4">
             <div>
                 <h2 class="text-lg font-extrabold text-white">Pengisian Stok Menu</h2>
@@ -141,6 +146,10 @@
                     Isi stok per menu. Stok akan ditambahkan ke total stok menu yang dipilih.
                 </p>
             </div>
+            
+            <button onclick="switchTab('menu')" class="flex items-center gap-2 rounded-2xl bg-white/[.04] hover:bg-white/[.08] border border-white/10 px-4 py-2 text-xs font-bold text-slate-300 hover:text-white transition">
+                <i class="fa-solid fa-arrow-left"></i> Kembali ke Data Menu
+            </button>
         </div>
 
         <div class="overflow-x-auto">
@@ -159,35 +168,44 @@
                 <tbody class="divide-y divide-white/10">
                     <?php if (! empty($menus)): ?>
                         <?php $no = 1; foreach ($menus as $m): ?>
-                            <tr class="hover:bg-white/[.025] transition">
-                                <td class="px-5 py-4 text-slate-500 whitespace-nowrap"><?= esc($no++) ?></td>
-                                <td class="px-5 py-4 whitespace-nowrap">
-                                    <div class="flex items-center gap-3">
-                                        <?php if (! empty($m['gambar'])): ?>
-                                            <img src="<?= base_url('uploads/menu/' . $m['gambar']) ?>" alt="<?= esc($m['nama_menu'] ?? 'Menu') ?>" class="w-10 h-10 rounded-xl object-cover border border-white/10">
-                                        <?php else: ?>
-                                            <div class="w-10 h-10 rounded-xl bg-white/[.04] border border-white/10 flex items-center justify-center"><i class="fa-solid fa-image text-slate-500"></i></div>
-                                        <?php endif; ?>
-                                        <p class="text-sm font-bold text-white truncate max-w-[220px]"><?= esc($m['nama_menu'] ?? '-') ?></p>
+                            <tr class="hover:bg-white/[.025] transition-colors group">
+                                <td class="px-5 py-4 text-slate-500 font-mono text-sm"><?= esc($no++) ?></td>
+                                <td class="px-5 py-4">
+                                    <div class="flex items-center gap-4">
+                                        <div class="w-12 h-12 rounded-2xl overflow-hidden bg-white/[.04] border border-white/10 flex items-center justify-center">
+                                            <?php if (! empty($m['gambar'])): ?>
+                                                <img src="<?= base_url('uploads/menu/' . $m['gambar']) ?>" alt="<?= esc($m['nama_menu']) ?>" class="w-full h-full object-cover">
+                                            <?php else: ?>
+                                                <i class="fa-solid fa-image text-slate-600"></i>
+                                            <?php endif; ?>
+                                        </div>
+                                        <div class="flex flex-col">
+                                            <span class="text-sm font-bold text-white"><?= esc($m['nama_menu']) ?></span>
+                                            <span class="text-[10px] text-slate-500 uppercase tracking-widest">ID: <?= esc($m['id']) ?></span>
+                                        </div>
                                     </div>
                                 </td>
-                                <td class="px-5 py-4 text-center whitespace-nowrap">
-                                    <span class="inline-flex items-center gap-2 text-[10px] font-bold px-3 py-1.5 rounded-full border uppercase tracking-wider bg-sky-500/10 text-sky-300 border-sky-400/20">
+                                <td class="px-5 py-4 text-center">
+                                    <div class="inline-flex items-center justify-center px-4 py-1.5 rounded-full bg-sky-500/10 border border-sky-400/20 text-sky-300 font-bold text-xs">
                                         <?= $m['total_stok'] ?? 0 ?>
-                                    </span>
+                                    </div>
                                 </td>
                                 <form action="<?= base_url('admin/riwayat-stok/store') ?>" method="post">
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="menu_id" value="<?= esc($m['id']) ?>">
-                                    <td class="px-5 py-4 text-center whitespace-nowrap">
-                                        <input type="number" name="stok" min="1" class="w-24 rounded-xl bg-slate-950/60 border border-white/10 px-3 py-2 text-sm text-white text-center focus:outline-none focus:ring-2 focus:ring-sky-500/50" placeholder="0" required>
+                                    <td class="px-5 py-4 text-center">
+                                        <input type="number" name="stok" min="1" 
+                                               class="w-28 rounded-2xl bg-slate-950 border border-white/10 px-4 py-2.5 text-sm text-white text-center focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition-all placeholder-slate-700" 
+                                               placeholder="Jumlah..." required>
                                     </td>
-                                    <td class="px-5 py-4 text-center whitespace-nowrap">
-                                        <input type="date" name="tanggal" value="<?= date('Y-m-d') ?>" class="w-40 rounded-xl bg-slate-950/60 border border-white/10 px-3 py-2 text-sm text-white text-center focus:outline-none focus:ring-2 focus:ring-sky-500/50" required>
+                                    <td class="px-5 py-4 text-center">
+                                        <input type="date" name="tanggal" value="<?= date('Y-m-d') ?>" 
+                                               class="w-40 rounded-2xl bg-slate-950 border border-white/10 px-4 py-2.5 text-sm text-white text-center focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition-all" required>
                                     </td>
-                                    <td class="px-5 py-4 text-right whitespace-nowrap">
-                                        <button type="submit" class="inline-flex items-center gap-2 text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white px-3 py-2 rounded-xl transition">
-                                            <i class="fa-solid fa-plus"></i> Tambah
+                                    <td class="px-5 py-4 text-right">
+                                        <button type="submit" 
+                                                class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-900/20 transition-all active:scale-95">
+                                            <i class="fa-solid fa-check"></i> Simpan
                                         </button>
                                     </td>
                                 </form>
@@ -201,5 +219,12 @@
         </div>
     </div>
 </div>
+
+<script>
+    function switchTab(tab) {
+        document.getElementById('section-menu').classList.toggle('hidden', tab !== 'menu');
+        document.getElementById('section-stok').classList.toggle('hidden', tab !== 'stok');
+    }
+</script>
 
 <?= $this->endSection() ?>
