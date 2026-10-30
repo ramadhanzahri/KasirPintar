@@ -254,7 +254,7 @@ $isActive = static function (string $path) {
                             <span class="nav-icon w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-slate-300 transition">
                                 <i class="fa-solid fa-receipt"></i>
                             </span>
-                            <span>Pesanan / Transaksi</span>
+                            <span>Pesanan</span>
                         </a>
 
                         <a href="<?= base_url('admin/riwayat-stok') ?>"
