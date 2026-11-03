@@ -121,11 +121,17 @@
                                 <td class="px-5 py-4 text-right whitespace-nowrap">
                                     <div class="flex items-center justify-end gap-2">
                                         <a href="<?= base_url('admin/menu/edit/' . $m['id']) ?>" class="inline-flex items-center gap-2 text-xs font-bold text-sky-300 hover:text-white bg-sky-500/10 hover:bg-sky-500/20 border border-sky-400/20 px-3 py-2 rounded-xl transition"><i class="fa-solid fa-pen"></i> Edit</a>
-                                        <form action="<?= base_url('admin/menu/delete/' . $m['id']) ?>" method="post" onsubmit="return confirm('Hapus menu ini?')">
-                                            <?= csrf_field() ?>
-                                            <button type="submit" class="inline-flex items-center gap-2 text-xs font-bold text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-500/20 border border-rose-400/20 px-3 py-2 rounded-xl transition"><i class="fa-solid fa-trash"></i> Hapus</button>
-                                        </form>
-                                    </div>
+                                       <!-- Tombol Hapus -->
+                                         <button
+                                         type="button"
+                                         onclick='confirmDelete(
+                                             <?= esc(json_encode(base_url("admin/menu/delete/" . $m["id"])), "attr") ?>,
+                                             <?= esc(json_encode($m["nama_menu"] ?? "-"), "attr") ?>,
+                                             <?= esc(json_encode($m["total_stok"] ?? 0), "attr") ?>
+                                        )'
+                                        class="inline-flex items-center gap-2 text-xs font-bold text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-500/20 border border-rose-400/20 px-3 py-2 rounded-xl transition">
+                                        <i class="fa-solid fa-trash"></i> Hapus
+                                        </button>
                                 </td>
                             </tr>
                         <?php endforeach; ?>
@@ -146,7 +152,7 @@
                     Isi stok per menu. Stok akan ditambahkan ke total stok menu yang dipilih.
                 </p>
             </div>
-            
+
             <button onclick="switchTab('menu')" class="flex items-center gap-2 rounded-2xl bg-white/[.04] hover:bg-white/[.08] border border-white/10 px-4 py-2 text-xs font-bold text-slate-300 hover:text-white transition">
                 <i class="fa-solid fa-arrow-left"></i> Kembali ke Data Menu
             </button>
@@ -194,16 +200,16 @@
                                     <?= csrf_field() ?>
                                     <input type="hidden" name="menu_id" value="<?= esc($m['id']) ?>">
                                     <td class="px-5 py-4 text-center">
-                                        <input type="number" name="stok" min="1" 
-                                               class="w-28 rounded-2xl bg-slate-950 border border-white/10 px-4 py-2.5 text-sm text-white text-center focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition-all placeholder-slate-700" 
+                                        <input type="number" name="stok" min="1"
+                                               class="w-28 rounded-2xl bg-slate-950 border border-white/10 px-4 py-2.5 text-sm text-white text-center focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition-all placeholder-slate-700"
                                                placeholder="Jumlah..." required>
                                     </td>
                                     <td class="px-5 py-4 text-center">
-                                        <input type="date" name="tanggal" value="<?= date('Y-m-d') ?>" 
+                                        <input type="date" name="tanggal" value="<?= date('Y-m-d') ?>"
                                                class="w-40 rounded-2xl bg-slate-950 border border-white/10 px-4 py-2.5 text-sm text-white text-center focus:border-sky-500 focus:ring-1 focus:ring-sky-500 outline-none transition-all" required>
                                     </td>
                                     <td class="px-5 py-4 text-right">
-                                        <button type="submit" 
+                                        <button type="submit"
                                                 class="inline-flex items-center gap-2.5 px-5 py-2.5 rounded-2xl bg-emerald-600 hover:bg-emerald-500 text-white font-bold text-xs shadow-lg shadow-emerald-900/20 transition-all active:scale-95">
                                             <i class="fa-solid fa-check"></i> Simpan
                                         </button>
@@ -220,11 +226,89 @@
     </div>
 </div>
 
+<!-- MODAL KONFIRMASI HAPUS MENU -->
+<div id="deleteModal"
+    class="fixed inset-0 z-[9999] hidden items-center justify-center bg-black/70 backdrop-blur-sm p-4">
+
+    <div class="w-full max-w-md rounded-2xl border border-white/10 bg-slate-900 shadow-2xl overflow-hidden">
+
+        <div class="p-6 text-center">
+            <div class="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-500/10 border border-rose-400/20">
+                <i class="fa-solid fa-trash-can text-2xl text-rose-400"></i>
+            </div>
+
+            <h3 class="text-xl font-extrabold text-white">
+                Hapus Menu?
+            </h3>
+
+            <p class="mt-2 text-sm text-slate-400">
+                Apakah kamu yakin ingin menghapus menu ini?
+                Tindakan ini tidak dapat dibatalkan.
+            </p>
+        </div>
+
+        <div class="mx-6 mb-6 rounded-2xl border border-white/10 bg-white/[.04] p-4">
+            <p class="text-xs text-slate-500 uppercase tracking-wider">
+                Menu yang akan dihapus
+            </p>
+
+            <p id="deleteMenuName" class="mt-2 text-base font-bold text-white">-</p>
+
+            <p class="mt-2 text-sm text-slate-400">
+                Stok tersedia:
+                <span id="deleteMenuQty" class="font-bold text-amber-400">0</span>
+            </p>
+        </div>
+
+        <div class="flex gap-3 border-t border-white/10 p-5">
+
+            <button type="button"
+                onclick="closeDeleteModal()"
+                class="flex-1 rounded-xl border border-white/10 bg-white/[.05] px-4 py-3 text-sm font-bold text-slate-300 hover:bg-white/10 transition">
+                Batal
+            </button>
+
+            <form id="deleteForm" method="post" class="flex-1">
+                <?= csrf_field() ?>
+
+                <button type="submit"
+                    class="w-full rounded-xl bg-rose-600 px-4 py-3 text-sm font-bold text-white hover:bg-rose-500 transition">
+                    <i class="fa-solid fa-trash mr-1"></i>
+                    Ya, Hapus
+                </button>
+            </form>
+
+        </div>
+    </div>
+</div>
+
 <script>
     function switchTab(tab) {
         document.getElementById('section-menu').classList.toggle('hidden', tab !== 'menu');
         document.getElementById('section-stok').classList.toggle('hidden', tab !== 'stok');
     }
+
+    function confirmDelete(actionUrl, menuName, qty) {
+        document.getElementById('deleteForm').action = actionUrl;
+        document.getElementById('deleteMenuName').textContent = menuName;
+        document.getElementById('deleteMenuQty').textContent = qty;
+
+        const modal = document.getElementById('deleteModal');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+    }
+
+    function closeDeleteModal() {
+        const modal = document.getElementById('deleteModal');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+    }
+
+    document.addEventListener('keydown', function(e) {
+        if (e.key === 'Escape') closeDeleteModal();
+    });
+
 </script>
+
 
 <?= $this->endSection() ?>
