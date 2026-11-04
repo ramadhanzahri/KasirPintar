@@ -26,7 +26,7 @@
                 </div>
 
                 <a href="<?= base_url('admin/dashboard') ?>"
-                   class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-white/[.04] hover:bg-white/[.08] border border-white/10 text-sm font-semibold text-slate-300 hover:text-white transition">
+                    class="inline-flex items-center justify-center gap-2 px-5 py-3 rounded-2xl bg-white/[.04] hover:bg-white/[.08] border border-white/10 text-sm font-semibold text-slate-300 hover:text-white transition">
                     <i class="fa-solid fa-arrow-left"></i>
                     Dashboard
                 </a>
@@ -69,9 +69,9 @@
                     Dari Tanggal
                 </label>
                 <input type="date"
-                       name="start_date"
-                       value="<?= esc($start_date ?? '') ?>"
-                       class="w-full rounded-2xl bg-slate-950/60 border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-400">
+                    name="start_date"
+                    value="<?= esc($start_date ?? '') ?>"
+                    class="w-full rounded-2xl bg-slate-950/60 border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-400">
             </div>
 
             <div>
@@ -79,20 +79,20 @@
                     Sampai Tanggal
                 </label>
                 <input type="date"
-                       name="end_date"
-                       value="<?= esc($end_date ?? '') ?>"
-                       class="w-full rounded-2xl bg-slate-950/60 border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-400">
+                    name="end_date"
+                    value="<?= esc($end_date ?? '') ?>"
+                    class="w-full rounded-2xl bg-slate-950/60 border border-white/10 px-4 py-3 text-sm text-white focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-400">
             </div>
 
             <div class="flex gap-2">
                 <button type="submit"
-                        class="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-sky-500 to-purple-600 px-5 py-3 text-sm font-bold text-white shadow-glow hover:opacity-95 transition">
+                    class="flex-1 inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-sky-500 to-purple-600 px-5 py-3 text-sm font-bold text-white shadow-glow hover:opacity-95 transition">
                     <i class="fa-solid fa-filter"></i>
                     Terapkan
                 </button>
 
                 <a href="<?= base_url('admin/riwayat-stok') ?>"
-                   class="inline-flex items-center justify-center gap-2 rounded-2xl bg-white/[.04] hover:bg-white/[.08] border border-white/10 px-4 py-3 text-sm font-semibold text-slate-300 hover:text-white transition">
+                    class="inline-flex items-center justify-center gap-2 rounded-2xl bg-white/[.04] hover:bg-white/[.08] border border-white/10 px-4 py-3 text-sm font-semibold text-slate-300 hover:text-white transition">
                     <i class="fa-solid fa-rotate-left"></i>
                 </a>
             </div>
@@ -146,8 +146,8 @@
                                 <td class="px-5 py-4 text-right whitespace-nowrap">
                                     <?php if (($r['tanggal'] ?? '') === date('Y-m-d')): ?>
                                         <button type="button"
-                                                onclick="confirmDelete('<?= base_url('admin/riwayat-stok/delete/' . $r['id']) ?>', '<?= esc($r['nama_menu'] ?? '-', 'js') ?>', '<?= esc($r['stok'] ?? 0, 'js') ?>')"
-                                                class="inline-flex items-center gap-2 text-xs font-bold text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-500/20 border border-rose-400/20 px-3 py-2 rounded-xl transition">
+                                            onclick="confirmDelete('<?= base_url('admin/riwayat-stok/delete/' . $r['id']) ?>', '<?= esc($r['nama_menu'] ?? '-', 'js') ?>', '<?= esc($r['stok'] ?? 0, 'js') ?>')"
+                                            class="inline-flex items-center gap-2 text-xs font-bold text-rose-300 hover:text-white bg-rose-500/10 hover:bg-rose-500/20 border border-rose-400/20 px-3 py-2 rounded-xl transition">
                                             <i class="fa-solid fa-trash"></i> Hapus
                                         </button>
                                     <?php else: ?>

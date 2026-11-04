@@ -19,13 +19,30 @@ class RiwayatStok extends BaseController
 
     public function index()
     {
+        $request = \Config\Services::request();
+        $startDate = $request->getGet('start_date');
+        $endDate   = $request->getGet('end_date');
+
+        $builder = $this->riwayatModel
+            ->select('tb_riwayat_stok.*, tb_menu.nama_menu')
+            ->join('tb_menu', 'tb_menu.id = tb_riwayat_stok.menu_id');
+
+        if (!empty($startDate) || !empty($endDate)) {
+            if (!empty($startDate)) {
+                $builder->where('tanggal >=', $startDate);
+            }
+            if (!empty($endDate)) {
+                $builder->where('tanggal <=', $endDate);
+            }
+        } else {
+            $builder->where('tanggal', date('Y-m-d'));
+        }
+
         $data = [
-            'title'   => 'Riwayat Stok',
-            'riwayat' => $this->riwayatModel
-                ->select('tb_riwayat_stok.*, tb_menu.nama_menu')
-                ->join('tb_menu', 'tb_menu.id = tb_riwayat_stok.menu_id')
-                ->orderBy('tanggal', 'DESC')
-                ->findAll(),
+            'title'      => 'Riwayat Stok',
+            'riwayat'    => $builder->orderBy('tanggal', 'DESC')->findAll(),
+            'start_date' => $startDate,
+            'end_date'   => $endDate,
         ];
 
         return view('admin/riwayat_stok/index', $data);
@@ -79,11 +96,11 @@ class RiwayatStok extends BaseController
 
         // Hapus dari tb_stok yang memiliki data sama
         $db->table('tb_stok')
-           ->where('menu_id', $riwayat['menu_id'])
-           ->where('stok', $riwayat['stok'])
-           ->where('tanggal', $riwayat['tanggal'])
-           ->limit(1)
-           ->delete();
+            ->where('menu_id', $riwayat['menu_id'])
+            ->where('stok', $riwayat['stok'])
+            ->where('tanggal', $riwayat['tanggal'])
+            ->limit(1)
+            ->delete();
 
         return redirect()->to(base_url('admin/riwayat-stok'))->with('success', 'Riwayat stok berhasil dihapus.');
     }

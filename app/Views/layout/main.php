@@ -185,6 +185,12 @@ $isActive = static function (string $path) {
             backdrop-filter: blur(18px);
             -webkit-backdrop-filter: blur(18px);
         }
+
+        input[type="date"]::-webkit-calendar-picker-indicator,
+        input[type="time"]::-webkit-calendar-picker-indicator {
+            filter: invert(1);
+            cursor: pointer;
+        }
     </style>
 </head>
 
@@ -254,7 +260,7 @@ $isActive = static function (string $path) {
                             <span class="nav-icon w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-slate-300 transition">
                                 <i class="fa-solid fa-receipt"></i>
                             </span>
-                            <span>Pesanan</span>
+                            <span>Riwayat Transaksi</span>
                         </a>
 
                         <a href="<?= base_url('admin/riwayat-stok') ?>"
@@ -505,7 +511,17 @@ $isActive = static function (string $path) {
             setTimeout(() => el.remove(), 3200);
         }
     </script>
-    <style>@keyframes shrink{from{width:100%}to{width:0}}</style>
+    <style>
+        @keyframes shrink {
+            from {
+                width: 100%
+            }
+
+            to {
+                width: 0
+            }
+        }
+    </style>
 </body>
 
 </html>
