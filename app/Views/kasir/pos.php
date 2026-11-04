@@ -67,7 +67,7 @@ $receiptData = static function (array $p) use ($formatMetode): array {
         <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h1 class="text-xl lg:text-2xl font-extrabold tracking-tight text-white flex items-center gap-3">
-                    <span id="header-title">POS Pintar</span>
+                    <span id="header-title">Pesanan</span>
                     <span id="live-indicator" class="hidden inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-400/20 text-emerald-300 text-[10px] font-bold uppercase tracking-wider">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live
                     </span>
@@ -78,10 +78,10 @@ $receiptData = static function (array $p) use ($formatMetode): array {
             <!-- Tab Switcher -->
             <div class="flex p-1 bg-white/[.04] border border-white/10 rounded-2xl w-fit">
                 <button onclick="switchTab('pos')" id="btn-tab-pos" class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all bg-sky-500 text-white shadow-glow">
-                    <i class="fa-solid fa-cash-register mr-2"></i> POS
+                    <i class="fa-solid fa-cash-register mr-2"></i> Pesanan
                 </button>
                 <button onclick="switchTab('antrean')" id="btn-tab-antrean" class="tab-btn px-6 py-2.5 rounded-xl text-xs font-bold transition-all text-slate-400 hover:text-white">
-                    <i class="fa-solid fa-bell-concierge mr-2"></i> Antrean 
+                    <i class="fa-solid fa-bell-concierge mr-2"></i> Antrean
                     <span id="badge-pending-count" class="ml-1 px-1.5 py-0.5 rounded-md bg-white/10 text-[10px]"><?= $total_pending ?></span>
                 </button>
             </div>
@@ -99,14 +99,14 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                 </div>
                 <div id="pos-menu-grid" class="flex-1 overflow-y-auto pr-1 scrollbar-thin">
                     <div class="grid grid-cols-2 sm:grid-cols-3 xl:grid-cols-4 gap-3 pb-4">
-                        <?php foreach (($menus ?? []) as $item): 
+                        <?php foreach (($menus ?? []) as $item):
                             $stokRaw = $item['stok'] ?? null;
                             $isHabis = (!is_null($stokRaw) && (int)$stokRaw <= 0) || !((int)($item['is_active'] ?? 1));
                             $isLow = !is_null($stokRaw) && (int)$stokRaw > 0 && (int)$stokRaw <= 10;
                             $stokLabel = is_null($stokRaw) ? 'Unlimited' : (string)(int)$stokRaw;
                         ?>
                             <div class="pos-menu-card group relative rounded-2xl border overflow-hidden cursor-pointer transition <?= $isHabis ? 'opacity-50 pointer-events-none border-white/10 bg-white/[.04]' : ($isLow ? 'border-amber-400/30 bg-amber-500/[.06] hover:border-amber-400/50' : 'border-white/10 bg-white/[.04] hover:border-sky-400/30 hover:bg-sky-500/[.04]') ?>"
-                                 data-id="<?= esc($item['id']) ?>" data-nama="<?= esc($item['nama_menu']) ?>" data-harga="<?= esc($item['harga']) ?>" data-stok="<?= esc(is_null($stokRaw) ? 'null' : (int)$stokRaw) ?>" onclick="posAddToCart(this)">
+                                data-id="<?= esc($item['id']) ?>" data-nama="<?= esc($item['nama_menu']) ?>" data-harga="<?= esc($item['harga']) ?>" data-stok="<?= esc(is_null($stokRaw) ? 'null' : (int)$stokRaw) ?>" onclick="posAddToCart(this)">
                                 <div class="relative aspect-[4/3] bg-white/[.03]">
                                     <?php if (!empty($item['gambar'])): ?>
                                         <img src="<?= base_url('uploads/menu/' . $item['gambar']) ?>" class="w-full h-full object-cover">
@@ -129,7 +129,7 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                                         <?php if (is_null($stokRaw)): ?>
                                         <?php elseif ($isHabis): ?><i class="fa-solid fa-circle-xmark text-[9px]"></i> Stok Habis
                                         <?php elseif ($isLow): ?><i class="fa-solid fa-triangle-exclamation text-[9px]"></i> Sisa stok <?= esc($stokLabel) ?>
-                                        <?php else: ?>Stok <?= esc($stokLabel) ?><?php endif; ?>
+                                            <?php else: ?>Stok <?= esc($stokLabel) ?><?php endif; ?>
                                     </p>
                                 </div>
                                 <div id="pos-stok-bar-<?= esc($item['id']) ?>" class="h-1 w-full bg-amber-500/60 <?= $isLow ? '' : 'hidden' ?>"></div>
@@ -151,41 +151,41 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                     </div>
                     <div id="pos-cart-items"></div>
                 </div>
-            <div class="p-4 border-t border-white/10 bg-white/[.025] space-y-3">
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.12em] mb-1.5">Nama Pelanggan *</label>
-                    <input type="text" id="pos-nama" placeholder="Nama pelanggan" maxlength="100" class="w-full bg-white/[.04] border border-white/10 text-white text-xs rounded-xl px-3 py-2.5 outline-none focus:border-sky-400/40 transition placeholder-slate-600">
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.12em] mb-1.5">Metode Pembayaran *</label>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label class="flex items-center justify-center gap-2 rounded-xl bg-white/[.04] border border-white/10 px-3 py-2.5 cursor-pointer transition hover:border-sky-400/30 has-[:checked]:border-sky-400/50 has-[:checked]:bg-sky-500/[.08]">
-                            <input type="radio" name="pos_payment_method" value="tunai" checked class="hidden" onchange="posHitungKembalian()">
-                            <i class="fa-solid fa-money-bill-wave text-xs text-slate-400"></i>
-                            <span class="text-[11px] font-bold text-slate-300">Tunai</span>
-                        </label>
-                        <label class="flex items-center justify-center gap-2 rounded-xl bg-white/[.04] border border-white/10 px-3 py-2.5 cursor-pointer transition hover:border-sky-400/30 has-[:checked]:border-sky-400/50 has-[:checked]:bg-sky-500/[.08]">
-                            <input type="radio" name="pos_payment_method" value="qris" class="hidden" onchange="posHitungKembalian()">
-                            <i class="fa-solid fa-qrcode text-xs text-slate-400"></i>
-                            <span class="text-[11px] font-bold text-slate-300">QRIS</span>
-                        </label>
+                <div class="p-4 border-t border-white/10 bg-white/[.025] space-y-3">
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.12em] mb-1.5">Nama Pelanggan *</label>
+                        <input type="text" id="pos-nama" placeholder="Nama pelanggan" maxlength="100" class="w-full bg-white/[.04] border border-white/10 text-white text-xs rounded-xl px-3 py-2.5 outline-none focus:border-sky-400/40 transition placeholder-slate-600">
                     </div>
-                </div>
-                <div>
-                    <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.12em] mb-1.5">Catatan (opsional)</label>
-                    <input type="text" id="pos-catatan" placeholder="Catatan pesanan..." maxlength="500" class="w-full bg-white/[.04] border border-white/10 text-white text-xs rounded-xl px-3 py-2.5 outline-none focus:border-sky-400/40 transition placeholder-slate-600">
-                </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.12em] mb-1.5">Metode Pembayaran *</label>
+                        <div class="grid grid-cols-2 gap-2">
+                            <label class="flex items-center justify-center gap-2 rounded-xl bg-white/[.04] border border-white/10 px-3 py-2.5 cursor-pointer transition hover:border-sky-400/30 has-[:checked]:border-sky-400/50 has-[:checked]:bg-sky-500/[.08]">
+                                <input type="radio" name="pos_payment_method" value="tunai" checked class="hidden" onchange="posHitungKembalian()">
+                                <i class="fa-solid fa-money-bill-wave text-xs text-slate-400"></i>
+                                <span class="text-[11px] font-bold text-slate-300">Tunai</span>
+                            </label>
+                            <label class="flex items-center justify-center gap-2 rounded-xl bg-white/[.04] border border-white/10 px-3 py-2.5 cursor-pointer transition hover:border-sky-400/30 has-[:checked]:border-sky-400/50 has-[:checked]:bg-sky-500/[.08]">
+                                <input type="radio" name="pos_payment_method" value="qris" class="hidden" onchange="posHitungKembalian()">
+                                <i class="fa-solid fa-qrcode text-xs text-slate-400"></i>
+                                <span class="text-[11px] font-bold text-slate-300">QRIS</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div>
+                        <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.12em] mb-1.5">Catatan (opsional)</label>
+                        <input type="text" id="pos-catatan" placeholder="Catatan pesanan..." maxlength="500" class="w-full bg-white/[.04] border border-white/10 text-white text-xs rounded-xl px-3 py-2.5 outline-none focus:border-sky-400/40 transition placeholder-slate-600">
+                    </div>
                     <!-- Uang Bayar (Tunai Only) -->
                     <div id="pos-uang-bayar-section" class="">
                         <label class="block text-[10px] font-bold text-slate-500 uppercase tracking-[0.12em] mb-1.5">Uang Bayar</label>
                         <div class="relative">
                             <span class="absolute left-3 top-1/2 -translate-y-1/2 text-sm text-slate-500 font-semibold">Rp</span>
                             <input type="number"
-                                   id="pos-uang-bayar"
-                                   placeholder="0"
-                                   min="0"
-                                   oninput="posHitungKembalian()"
-                                   class="w-full bg-white/[.04] border border-white/10 text-white text-xs rounded-xl pl-9 pr-3 py-2.5 outline-none focus:border-sky-400/40 transition placeholder-slate-600">
+                                id="pos-uang-bayar"
+                                placeholder="0"
+                                min="0"
+                                oninput="posHitungKembalian()"
+                                class="w-full bg-white/[.04] border border-white/10 text-white text-xs rounded-xl pl-9 pr-3 py-2.5 outline-none focus:border-sky-400/40 transition placeholder-slate-600">
                         </div>
                         <div id="pos-kembalian-display" class="mt-2 rounded-xl bg-emerald-500/10 border border-emerald-400/20 px-3 py-2 hidden">
                             <div class="flex items-center justify-between">
@@ -328,13 +328,16 @@ $receiptData = static function (array $p) use ($formatMetode): array {
         const target = document.getElementById('tab-' + tab);
         target.classList.remove('hidden');
         void target.offsetHeight;
-        requestAnimationFrame(() => { void target.offsetHeight; window.dispatchEvent(new Event('resize')); });
-        
+        requestAnimationFrame(() => {
+            void target.offsetHeight;
+            window.dispatchEvent(new Event('resize'));
+        });
+
         document.querySelectorAll('.tab-btn').forEach(btn => {
             btn.classList.remove('bg-sky-500', 'text-white', 'shadow-glow');
             btn.classList.add('text-slate-400');
         });
-        
+
         const activeBtn = document.getElementById('btn-tab-' + tab);
         activeBtn.classList.remove('text-slate-400');
         activeBtn.classList.add('bg-sky-500', 'text-white', 'shadow-glow');
@@ -344,14 +347,17 @@ $receiptData = static function (array $p) use ($formatMetode): array {
             document.getElementById('header-desc').textContent = 'Pantau dan konfirmasi pembayaran antrean.';
             document.getElementById('live-indicator').classList.remove('hidden');
         } else {
-            document.getElementById('header-title').textContent = 'POS Pintar';
+            document.getElementById('header-title').textContent = 'Pesanan';
             document.getElementById('header-desc').textContent = 'Pilih menu dan buat pesanan pelanggan.';
             document.getElementById('live-indicator').classList.add('hidden');
         }
     }
 
     // Logic POS Pintar
-    function posRupiah(n) { return 'Rp ' + parseInt(n||0).toLocaleString('id-ID'); }
+    function posRupiah(n) {
+        return 'Rp ' + parseInt(n || 0).toLocaleString('id-ID');
+    }
+
     function posEscapeStruk(val) {
         return String(val ?? '')
             .replaceAll('&', '&amp;')
@@ -360,7 +366,7 @@ $receiptData = static function (array $p) use ($formatMetode): array {
             .replaceAll('"', '&quot;')
             .replaceAll("'", '&#039;');
     }
-    
+
     function getStokById(id) {
         const card = document.querySelector(`.pos-menu-card[data-id="${id}"]`);
         if (!card) return null;
@@ -369,9 +375,13 @@ $receiptData = static function (array $p) use ($formatMetode): array {
         const n = parseInt(v);
         return isNaN(n) ? null : n;
     }
+
     function posStokAlert(nama, stok, qty) {
         const cont = document.getElementById('pos-toast-container');
-        if (!cont) { alert(`Stok "${nama}" hanya ${stok}. Kamu minta ${qty}.`); return; }
+        if (!cont) {
+            alert(`Stok "${nama}" hanya ${stok}. Kamu minta ${qty}.`);
+            return;
+        }
         const el = document.createElement('div');
         el.className = 'pos-toast relative flex items-start gap-3 rounded-2xl border border-rose-400/30 bg-slate-900/95 backdrop-blur p-4 w-full shadow-2xl overflow-hidden';
         el.innerHTML = `
@@ -383,8 +393,12 @@ $receiptData = static function (array $p) use ($formatMetode): array {
             <button type="button" onclick="this.closest('.pos-toast').remove()" class="w-7 h-7 rounded-lg bg-white/5 hover:bg-white/10 flex items-center justify-center text-slate-400 shrink-0"><i class="fa-solid fa-xmark text-xs"></i></button>
             <div class="absolute bottom-0 left-0 h-0.5 bg-rose-500 pos-toast-bar"></div>`;
         cont.appendChild(el);
-        setTimeout(() => { el.classList.add('closing'); setTimeout(()=> el.remove(), 300); }, 3200);
+        setTimeout(() => {
+            el.classList.add('closing');
+            setTimeout(() => el.remove(), 300);
+        }, 3200);
     }
+
     function posAddToCart(el) {
         const id = parseInt(el.dataset.id);
         const stok = getStokById(id);
@@ -393,14 +407,24 @@ $receiptData = static function (array $p) use ($formatMetode): array {
         const nextQty = ex ? ex.qty + 1 : 1;
         if (stok !== null && nextQty > stok) {
             posStokAlert(nama, stok, nextQty);
-            el.classList.remove('pos-shake'); void el.offsetWidth; el.classList.add('pos-shake');
-            setTimeout(()=> el.classList.remove('pos-shake'), 550);
+            el.classList.remove('pos-shake');
+            void el.offsetWidth;
+            el.classList.add('pos-shake');
+            setTimeout(() => el.classList.remove('pos-shake'), 550);
             const cardStok = document.getElementById('pos-stok-text-' + id);
-            if (cardStok) { cardStok.classList.add('pos-shake'); setTimeout(()=> cardStok.classList.remove('pos-shake'), 550); }
+            if (cardStok) {
+                cardStok.classList.add('pos-shake');
+                setTimeout(() => cardStok.classList.remove('pos-shake'), 550);
+            }
             return;
         }
         if (ex) ex.qty++;
-        else posCart.push({ id, nama, harga: parseInt(el.dataset.harga), qty: 1 });
+        else posCart.push({
+            id,
+            nama,
+            harga: parseInt(el.dataset.harga),
+            qty: 1
+        });
         posRenderCart();
     }
 
@@ -409,10 +433,15 @@ $receiptData = static function (array $p) use ($formatMetode): array {
         const empty = document.getElementById('pos-cart-empty');
         const btn = document.getElementById('pos-btn-submit');
         if (posCart.length === 0) {
-            cont.innerHTML = ''; empty.classList.remove('hidden'); btn.disabled = true;
-            updateBadges(); updateTotals(); return;
+            cont.innerHTML = '';
+            empty.classList.remove('hidden');
+            btn.disabled = true;
+            updateBadges();
+            updateTotals();
+            return;
         }
-        empty.classList.add('hidden'); btn.disabled = false;
+        empty.classList.add('hidden');
+        btn.disabled = false;
         cont.innerHTML = posCart.map((i, idx) => `
             <div class="flex items-center gap-3 bg-white/5 border border-white/5 p-3 rounded-xl">
                 <div class="flex-1 min-w-0"><p class="text-[11px] font-bold truncate">${i.nama}</p><p class="text-[10px] text-sky-300">@ ${posRupiah(i.harga)}</p></div>
@@ -423,7 +452,8 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                 </div>
             </div>
         `).join('');
-        updateBadges(); updateTotals();
+        updateBadges();
+        updateTotals();
     }
 
     function posUpdateQty(idx, d) {
@@ -435,7 +465,12 @@ $receiptData = static function (array $p) use ($formatMetode): array {
             if (stok !== null && next > stok) {
                 posStokAlert(item.nama, stok, next);
                 const row = document.getElementById('pos-cart-items')?.children[idx];
-                if (row) { row.classList.remove('pos-shake'); void row.offsetWidth; row.classList.add('pos-shake','pos-stok-exceed'); setTimeout(()=> row.classList.remove('pos-shake','pos-stok-exceed'), 600); }
+                if (row) {
+                    row.classList.remove('pos-shake');
+                    void row.offsetWidth;
+                    row.classList.add('pos-shake', 'pos-stok-exceed');
+                    setTimeout(() => row.classList.remove('pos-shake', 'pos-stok-exceed'), 600);
+                }
                 return;
             }
         }
@@ -447,13 +482,18 @@ $receiptData = static function (array $p) use ($formatMetode): array {
     function updateBadges() {
         document.querySelectorAll('.pos-qty-badge').forEach(b => b.classList.add('hidden'));
         posCart.forEach(i => {
-            const b = document.getElementById('pos-qty-'+i.id);
-            if(b) { b.textContent = i.qty; b.classList.remove('hidden'); b.classList.add('flex'); }
+            const b = document.getElementById('pos-qty-' + i.id);
+            if (b) {
+                b.textContent = i.qty;
+                b.classList.remove('hidden');
+                b.classList.add('flex');
+            }
         });
     }
 
     function updateTotals() {
-        let total = 0; posCart.forEach(i => total += (i.harga * i.qty));
+        let total = 0;
+        posCart.forEach(i => total += (i.harga * i.qty));
         document.getElementById('pos-total').textContent = posRupiah(total);
         posHitungKembalian();
     }
@@ -474,7 +514,9 @@ $receiptData = static function (array $p) use ($formatMetode): array {
         section.classList.remove('hidden');
 
         let total = 0;
-        posCart.forEach(i => { total += (i.harga * i.qty); });
+        posCart.forEach(i => {
+            total += (i.harga * i.qty);
+        });
 
         const uangBayar = parseInt(document.getElementById('pos-uang-bayar')?.value || 0);
 
@@ -498,7 +540,11 @@ $receiptData = static function (array $p) use ($formatMetode): array {
     }
 
     function posRefreshStok() {
-        fetch('<?= base_url('kasir/pos/stok') ?>', { headers: { 'X-Requested-With': 'XMLHttpRequest' }})
+        fetch('<?= base_url('kasir/pos/stok') ?>', {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            })
             .then(r => r.json()).then(j => {
                 if (!j.success || !Array.isArray(j.data)) return;
                 j.data.forEach(m => {
@@ -518,33 +564,59 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                     const text = document.getElementById('pos-stok-text-' + m.id);
                     const bar = document.getElementById('pos-stok-bar-' + m.id);
                     if (text) {
-                        if (stokRaw === null) { text.classList.add('hidden'); text.innerHTML = ''; }
-                        else if (isHabis) { text.className = 'text-[10px] font-bold mt-1 flex items-center gap-1 text-rose-400'; text.innerHTML = '<i class="fa-solid fa-circle-xmark text-[9px]"></i> Stok Habis'; text.classList.remove('hidden'); }
-                        else if (isLow) { text.className = 'text-[10px] font-bold mt-1 flex items-center gap-1 text-amber-300'; text.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-[9px]"></i> Sisa stok ' + stokRaw; text.classList.remove('hidden'); }
-                        else { text.className = 'text-[10px] font-bold mt-1 flex items-center gap-1 text-slate-500'; text.textContent = 'Stok ' + stokRaw; text.classList.remove('hidden'); }
+                        if (stokRaw === null) {
+                            text.classList.add('hidden');
+                            text.innerHTML = '';
+                        } else if (isHabis) {
+                            text.className = 'text-[10px] font-bold mt-1 flex items-center gap-1 text-rose-400';
+                            text.innerHTML = '<i class="fa-solid fa-circle-xmark text-[9px]"></i> Stok Habis';
+                            text.classList.remove('hidden');
+                        } else if (isLow) {
+                            text.className = 'text-[10px] font-bold mt-1 flex items-center gap-1 text-amber-300';
+                            text.innerHTML = '<i class="fa-solid fa-triangle-exclamation text-[9px]"></i> Sisa stok ' + stokRaw;
+                            text.classList.remove('hidden');
+                        } else {
+                            text.className = 'text-[10px] font-bold mt-1 flex items-center gap-1 text-slate-500';
+                            text.textContent = 'Stok ' + stokRaw;
+                            text.classList.remove('hidden');
+                        }
                     }
-                    if (bar) { if (isLow) bar.classList.remove('hidden'); else bar.classList.add('hidden'); }
-                    card.classList.remove('opacity-50','pointer-events-none','border-white/10','bg-white/[.04]','border-amber-400/30','bg-amber-500/[.06]');
-                    if (isHabis) card.classList.add('opacity-50','pointer-events-none','border-white/10','bg-white/[.04]');
-                    else if (isLow) card.classList.add('border-amber-400/30','bg-amber-500/[.06]');
-                    else card.classList.add('border-white/10','bg-white/[.04]');
+                    if (bar) {
+                        if (isLow) bar.classList.remove('hidden');
+                        else bar.classList.add('hidden');
+                    }
+                    card.classList.remove('opacity-50', 'pointer-events-none', 'border-white/10', 'bg-white/[.04]', 'border-amber-400/30', 'bg-amber-500/[.06]');
+                    if (isHabis) card.classList.add('opacity-50', 'pointer-events-none', 'border-white/10', 'bg-white/[.04]');
+                    else if (isLow) card.classList.add('border-amber-400/30', 'bg-amber-500/[.06]');
+                    else card.classList.add('border-white/10', 'bg-white/[.04]');
                 });
-            }).catch(()=>{});
+            }).catch(() => {});
     }
 
     async function posSubmitOrder() {
         const nama = document.getElementById('pos-nama').value.trim();
         const catatan = document.getElementById('pos-catatan').value.trim();
-        if (!nama) { posAlert('Perhatian', 'Nama pelanggan wajib diisi'); return; }
-        if (posCart.length === 0) { posAlert('Perhatian', 'Keranjang masih kosong'); return; }
+        if (!nama) {
+            posAlert('Perhatian', 'Nama pelanggan wajib diisi');
+            return;
+        }
+        if (posCart.length === 0) {
+            posAlert('Perhatian', 'Keranjang masih kosong');
+            return;
+        }
         const paymentMethod = document.querySelector('input[name="pos_payment_method"]:checked').value;
         if (paymentMethod === 'tunai') {
-            let total = 0; posCart.forEach(i => total += (i.harga * i.qty));
+            let total = 0;
+            posCart.forEach(i => total += (i.harga * i.qty));
             const ub = parseInt(document.getElementById('pos-uang-bayar').value || 0);
-            if (!ub || ub < total) { posAlert('Pembayaran', 'Uang bayar tidak cukup'); return; }
+            if (!ub || ub < total) {
+                posAlert('Pembayaran', 'Uang bayar tidak cukup');
+                return;
+            }
         }
         const btn = document.getElementById('pos-btn-submit');
-        btn.disabled = true; btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
+        btn.disabled = true;
+        btn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i>';
 
         const fd = new FormData();
         fd.append(csrfName, csrfHash);
@@ -552,15 +624,24 @@ $receiptData = static function (array $p) use ($formatMetode): array {
         fd.append('catatan', catatan);
         fd.append('payment_method', paymentMethod);
         fd.append('uang_bayar', document.getElementById('pos-uang-bayar').value);
-        fd.append('items', JSON.stringify(posCart.map(i => ({id:i.id, qty:i.qty}))));
+        fd.append('items', JSON.stringify(posCart.map(i => ({
+            id: i.id,
+            qty: i.qty
+        }))));
 
         try {
-            const res = await fetch('<?= base_url('kasir/pos/submit') ?>', { method: 'POST', body: fd });
+            const res = await fetch('<?= base_url('kasir/pos/submit') ?>', {
+                method: 'POST',
+                body: fd
+            });
             const d = await res.json();
             if (d.success) {
-                posCart = []; posRenderCart(); document.getElementById('pos-nama').value = '';
+                posCart = [];
+                posRenderCart();
+                document.getElementById('pos-nama').value = '';
                 document.getElementById('pos-catatan').value = '';
-                const ub = document.getElementById('pos-uang-bayar'); if (ub) ub.value = '';
+                const ub = document.getElementById('pos-uang-bayar');
+                if (ub) ub.value = '';
                 document.getElementById('pos-success-antrian').textContent = d.nomor_antrian;
                 document.getElementById('pos-success-modal').classList.remove('hidden');
                 document.getElementById('pos-success-modal').classList.add('flex');
@@ -572,45 +653,65 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                 if (d.receipt_data) {
                     // posCetakStruk(d.receipt_data); -> Dihapus dari buat pesanan
                 }
-            } else { posAlert('Gagal', d.message || 'Gagal'); }
-        } catch(e) { posAlert('Error', 'Error koneksi'); }
-        btn.disabled = false; btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i>Buat Pesanan';
+            } else {
+                posAlert('Gagal', d.message || 'Gagal');
+            }
+        } catch (e) {
+            posAlert('Error', 'Error koneksi');
+        }
+        btn.disabled = false;
+        btn.innerHTML = '<i class="fa-solid fa-paper-plane mr-2"></i>Buat Pesanan';
     }
 
-    function posCloseSuccess() { document.getElementById('pos-success-modal').classList.add('hidden'); }
+    function posCloseSuccess() {
+        document.getElementById('pos-success-modal').classList.add('hidden');
+    }
 
     // Logic Antrean
     let bayarFormPending = null;
     let batalKodePending = '';
+
     function konfirmasiBayar(e, form) {
-        e.preventDefault(); bayarFormPending = form;
+        e.preventDefault();
+        bayarFormPending = form;
         document.getElementById('pos-confirm-antrian').textContent = form.dataset.bayarAntrian;
         const m = document.getElementById('pos-confirm-modal');
-        m.classList.remove('hidden'); m.classList.add('flex');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
         return false;
     }
-    function tutupKonfirmasiBayar() { document.getElementById('pos-confirm-modal').classList.add('hidden'); }
+
+    function tutupKonfirmasiBayar() {
+        document.getElementById('pos-confirm-modal').classList.add('hidden');
+    }
+
     function konfirmasiBatal(kode, antri) {
         batalKodePending = kode;
         document.getElementById('pos-batal-antrian').textContent = antri;
         const m = document.getElementById('pos-batal-modal');
-        m.classList.remove('hidden'); m.classList.add('flex');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
     }
+
     function tutupKonfirmasiBatal() {
         document.getElementById('pos-batal-modal').classList.add('hidden');
         document.getElementById('pos-batal-modal').classList.remove('flex');
         batalKodePending = '';
     }
+
     function posClearCart() {
         if (posCart.length === 0) return;
         const totalQty = posCart.reduce((s, i) => s + (parseInt(i.qty) || 0), 0);
         document.getElementById('pos-clear-count').textContent = totalQty;
         const m = document.getElementById('pos-clear-modal');
-        m.classList.remove('hidden'); m.classList.add('flex');
+        m.classList.remove('hidden');
+        m.classList.add('flex');
     }
+
     function tutupKonfirmasiClear() {
         const m = document.getElementById('pos-clear-modal');
-        m.classList.add('hidden'); m.classList.remove('flex');
+        m.classList.add('hidden');
+        m.classList.remove('flex');
     }
     document.getElementById('pos-clear-ya').onclick = function() {
         tutupKonfirmasiClear();
@@ -625,8 +726,15 @@ $receiptData = static function (array $p) use ($formatMetode): array {
         const kode = batalKodePending;
         tutupKonfirmasiBatal();
         try {
-            const fd = new FormData(); fd.append(csrfName, csrfHash);
-            const res = await fetch('<?= base_url('kasir/batal/') ?>' + encodeURIComponent(kode), { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' }});
+            const fd = new FormData();
+            fd.append(csrfName, csrfHash);
+            const res = await fetch('<?= base_url('kasir/batal/') ?>' + encodeURIComponent(kode), {
+                method: 'POST',
+                body: fd,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             const d = await res.json();
             if (d.success) {
                 const card = document.querySelector(`[data-order-card="${kode}"]`);
@@ -636,29 +744,41 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                 document.getElementById('badge-pending-count').textContent = count.textContent;
                 if (parseInt(count.textContent || '0') === 0) document.getElementById('empty-state').classList.remove('hidden');
                 posRefreshStok();
-            } else { alert(d.message || 'Gagal membatalkan'); }
-        } catch(e) { alert('Gagal terhubung'); }
+            } else {
+                alert(d.message || 'Gagal membatalkan');
+            }
+        } catch (e) {
+            alert('Gagal terhubung');
+        }
     };
-    
+
     document.getElementById('pos-confirm-ya').onclick = async function() {
-        const form = bayarFormPending; tutupKonfirmasiBayar();
-        const fd = new FormData(form); fd.append(csrfName, csrfHash);
+        const form = bayarFormPending;
+        tutupKonfirmasiBayar();
+        const fd = new FormData(form);
+        fd.append(csrfName, csrfHash);
         try {
-                const res = await fetch(form.action, { method: 'POST', body: fd, headers: { 'X-Requested-With': 'XMLHttpRequest' }});
-                const d = await res.json();
-                if (d.success) {
-                    const card = document.querySelector(`[data-order-card="${d.data.kode_pesanan}"]`);
-                    if (card) card.remove();
-                    document.getElementById('count-pending').textContent = Math.max(0, parseInt(document.getElementById('count-pending').textContent)-1);
-                    document.getElementById('badge-pending-count').textContent = document.getElementById('count-pending').textContent;
-                    document.getElementById('pendapatan-hari-ini').textContent = posRupiah(parseInt(document.getElementById('pendapatan-hari-ini').dataset.amount) + parseInt(d.data.total_harga));
-                    document.getElementById('pendapatan-hari-ini').dataset.amount = parseInt(document.getElementById('pendapatan-hari-ini').dataset.amount) + parseInt(d.data.total_harga);
-                    
-                    if (d.data) posCetakStruk(d.data);
-                    
-                    posRefreshStok();
+            const res = await fetch(form.action, {
+                method: 'POST',
+                body: fd,
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
                 }
-        } catch(e) {}
+            });
+            const d = await res.json();
+            if (d.success) {
+                const card = document.querySelector(`[data-order-card="${d.data.kode_pesanan}"]`);
+                if (card) card.remove();
+                document.getElementById('count-pending').textContent = Math.max(0, parseInt(document.getElementById('count-pending').textContent) - 1);
+                document.getElementById('badge-pending-count').textContent = document.getElementById('count-pending').textContent;
+                document.getElementById('pendapatan-hari-ini').textContent = posRupiah(parseInt(document.getElementById('pendapatan-hari-ini').dataset.amount) + parseInt(d.data.total_harga));
+                document.getElementById('pendapatan-hari-ini').dataset.amount = parseInt(document.getElementById('pendapatan-hari-ini').dataset.amount) + parseInt(d.data.total_harga);
+
+                if (d.data) posCetakStruk(d.data);
+
+                posRefreshStok();
+            }
+        } catch (e) {}
     };
 
     function posCetakStruk(data) {
@@ -744,23 +864,32 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                 <script>window.onload=function(){setTimeout(function(){window.print();setTimeout(function(){window.close();},500);},250);};<\/script>
             </body>
             </html>`;
-        const w = window.open('','_blank','width=380,height=650');
-        if (!w) { alert('Popup diblokir browser. Izinkan popup untuk cetak.'); return; }
-        w.document.open(); w.document.write(html); w.document.close();
+        const w = window.open('', '_blank', 'width=380,height=650');
+        if (!w) {
+            alert('Popup diblokir browser. Izinkan popup untuk cetak.');
+            return;
+        }
+        w.document.open();
+        w.document.write(html);
+        w.document.close();
     }
 
     document.addEventListener('DOMContentLoaded', () => posHitungKembalian());
 
     function escapeHTMLAntrean(v) {
-        return String(v ?? '').replaceAll('&','&amp;').replaceAll('<','&lt;').replaceAll('>','&gt;').replaceAll('"','&quot;').replaceAll("'","&#039;");
+        return String(v ?? '').replaceAll('&', '&amp;').replaceAll('<', '&lt;').replaceAll('>', '&gt;').replaceAll('"', '&quot;').replaceAll("'", "&#039;");
     }
+
     function renderAntreanCard(p) {
         const kode = escapeHTMLAntrean(p.kode_pesanan);
         const antri = escapeHTMLAntrean(p.nomor_antrian ?? '-');
         const nama = escapeHTMLAntrean(p.nama_pemesan ?? '-');
         const metodeLabel = escapeHTMLAntrean(p.metode_label ?? p.metode_pembayaran ?? '-');
         const total = posRupiah(p.total_harga ?? 0);
-        const waktu = escapeHTMLAntrean(p.waktu ?? (p.created_at ? new Date(p.created_at).toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'}) : '-'));
+        const waktu = escapeHTMLAntrean(p.waktu ?? (p.created_at ? new Date(p.created_at).toLocaleTimeString('id-ID', {
+            hour: '2-digit',
+            minute: '2-digit'
+        }) : '-'));
         const csrfField = `<?= csrf_field() ?>`;
         let itemsHTML = '';
         if (Array.isArray(p.items) && p.items.length) {
@@ -797,8 +926,9 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                 </div>
             </div>`;
     }
+
     function tambahAntreanDOM(p) {
-        if(document.querySelector(`[data-order-card="${p.kode_pesanan}"]`)) return;
+        if (document.querySelector(`[data-order-card="${p.kode_pesanan}"]`)) return;
         document.getElementById('order-container').insertAdjacentHTML('afterbegin', renderAntreanCard(p));
         if (p.kode_pesanan && String(p.kode_pesanan) > String(lastId)) lastId = p.kode_pesanan;
         const count = document.getElementById('count-pending');
@@ -809,14 +939,18 @@ $receiptData = static function (array $p) use ($formatMetode): array {
 
     // Auto Refresh Antrean
     setInterval(async () => {
-        if(activeTab !== 'antrean') return;
+        if (activeTab !== 'antrean') return;
         try {
-            const res = await fetch('<?= base_url('kasir/cek_baru') ?>/' + encodeURIComponent(lastId) + '?t=' + Date.now(), { headers: { 'X-Requested-With': 'XMLHttpRequest' }});
+            const res = await fetch('<?= base_url('kasir/cek_baru') ?>/' + encodeURIComponent(lastId) + '?t=' + Date.now(), {
+                headers: {
+                    'X-Requested-With': 'XMLHttpRequest'
+                }
+            });
             const d = await res.json();
-            if(d.ada && Array.isArray(d.data)) {
+            if (d.ada && Array.isArray(d.data)) {
                 lastId = d.last_id ?? lastId;
                 d.data.forEach(p => {
-                    if(!document.querySelector(`[data-order-card="${p.kode_pesanan}"]`)) {
+                    if (!document.querySelector(`[data-order-card="${p.kode_pesanan}"]`)) {
                         document.getElementById('order-container').insertAdjacentHTML('afterbegin', renderAntreanCard(p));
                         const count = document.getElementById('count-pending');
                         count.textContent = parseInt(count.textContent || '0') + 1;
@@ -825,23 +959,103 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                 });
                 document.getElementById('empty-state').classList.add('hidden');
             }
-        } catch(e) {}
+        } catch (e) {}
     }, 3000);
 </script>
 
 <style>
-    .shadow-glow { box-shadow: 0 0 15px rgba(14, 165, 233, 0.3); }
-    .scrollbar-thin::-webkit-scrollbar { width: 4px; }
-    .scrollbar-thin::-webkit-scrollbar-thumb { background: rgba(255,255,255,0.1); border-radius: 10px; }
-    .pos-toast { pointer-events: auto; animation: posToastIn .38s cubic-bezier(.21,1.02,.73,1) both; }
-    .pos-toast.closing { animation: posToastOut .3s ease forwards; }
-    @keyframes posToastIn { from { opacity:0; transform: translateX(28px) scale(.95); } to { opacity:1; transform: translateX(0) scale(1); } }
-    @keyframes posToastOut { from { opacity:1; transform: translateX(0) scale(1); } to { opacity:0; transform: translateX(28px) scale(.95); } }
-    .pos-toast-bar { animation: posToastBar 3.2s linear forwards; }
-    @keyframes posToastBar { from { width:100%; } to { width:0%; } }
-    @keyframes posShake { 0%,100%{ transform: translateX(0);} 20%{ transform: translateX(-4px);} 40%{ transform: translateX(4px);} 60%{ transform: translateX(-3px);} 80%{ transform: translateX(3px);} }
-    .pos-shake { animation: posShake .45s ease; }
-    .pos-stok-exceed { border-color: rgba(244,63,94,.6) !important; background: rgba(244,63,94,.08) !important; }
+    .shadow-glow {
+        box-shadow: 0 0 15px rgba(14, 165, 233, 0.3);
+    }
+
+    .scrollbar-thin::-webkit-scrollbar {
+        width: 4px;
+    }
+
+    .scrollbar-thin::-webkit-scrollbar-thumb {
+        background: rgba(255, 255, 255, 0.1);
+        border-radius: 10px;
+    }
+
+    .pos-toast {
+        pointer-events: auto;
+        animation: posToastIn .38s cubic-bezier(.21, 1.02, .73, 1) both;
+    }
+
+    .pos-toast.closing {
+        animation: posToastOut .3s ease forwards;
+    }
+
+    @keyframes posToastIn {
+        from {
+            opacity: 0;
+            transform: translateX(28px) scale(.95);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+    }
+
+    @keyframes posToastOut {
+        from {
+            opacity: 1;
+            transform: translateX(0) scale(1);
+        }
+
+        to {
+            opacity: 0;
+            transform: translateX(28px) scale(.95);
+        }
+    }
+
+    .pos-toast-bar {
+        animation: posToastBar 3.2s linear forwards;
+    }
+
+    @keyframes posToastBar {
+        from {
+            width: 100%;
+        }
+
+        to {
+            width: 0%;
+        }
+    }
+
+    @keyframes posShake {
+
+        0%,
+        100% {
+            transform: translateX(0);
+        }
+
+        20% {
+            transform: translateX(-4px);
+        }
+
+        40% {
+            transform: translateX(4px);
+        }
+
+        60% {
+            transform: translateX(-3px);
+        }
+
+        80% {
+            transform: translateX(3px);
+        }
+    }
+
+    .pos-shake {
+        animation: posShake .45s ease;
+    }
+
+    .pos-stok-exceed {
+        border-color: rgba(244, 63, 94, .6) !important;
+        background: rgba(244, 63, 94, .08) !important;
+    }
 </style>
 
 <?= $this->endSection() ?>

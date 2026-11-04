@@ -13,11 +13,11 @@
                 <div>
                     <div class="inline-flex items-center gap-2 px-3 py-1.5 rounded-full bg-sky-500/10 border border-sky-400/20 text-sky-300 text-xs font-semibold mb-4">
                         <i class="fa-solid fa-users-gear"></i>
-                        User Management
+                        Kelola User
                     </div>
 
                     <h1 class="text-2xl lg:text-4xl font-extrabold tracking-tight text-white">
-                        Manajemen Akun
+                        Kelola User
                     </h1>
 
                     <p class="text-sm lg:text-base text-slate-400 mt-2 max-w-2xl">
@@ -207,12 +207,18 @@
 </div>
 
 <script>
-    (function () {
+    (function() {
         const modal = document.getElementById('modalAddUser');
         const openBtn = document.getElementById('btnOpenAddUser');
         if (!modal || !openBtn) return;
-        const open = () => { modal.classList.remove('hidden'); modal.classList.add('flex'); };
-        const close = () => { modal.classList.add('hidden'); modal.classList.remove('flex'); };
+        const open = () => {
+            modal.classList.remove('hidden');
+            modal.classList.add('flex');
+        };
+        const close = () => {
+            modal.classList.add('hidden');
+            modal.classList.remove('flex');
+        };
         openBtn.addEventListener('click', open);
         modal.querySelectorAll('[data-close-modal]').forEach(el => el.addEventListener('click', close));
     })();
