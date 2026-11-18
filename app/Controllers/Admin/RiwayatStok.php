@@ -38,11 +38,15 @@ class RiwayatStok extends BaseController
             $builder->where('tanggal', date('Y-m-d'));
         }
 
+        $today = date('Y-m-d');
+        $defaultStartDate = $startDate ?: $today;
+        $defaultEndDate = $endDate ?: $today;
+
         $data = [
             'title'      => 'Riwayat Stok',
             'riwayat'    => $builder->orderBy('tanggal', 'DESC')->findAll(),
-            'start_date' => $startDate,
-            'end_date'   => $endDate,
+            'start_date' => $defaultStartDate,
+            'end_date'   => $defaultEndDate,
         ];
 
         return view('admin/riwayat_stok/index', $data);
@@ -96,11 +100,11 @@ class RiwayatStok extends BaseController
 
         // Hapus dari tb_stok yang memiliki data sama
         $db->table('tb_stok')
-            ->where('menu_id', $riwayat['menu_id'])
-            ->where('stok', $riwayat['stok'])
-            ->where('tanggal', $riwayat['tanggal'])
-            ->limit(1)
-            ->delete();
+           ->where('menu_id', $riwayat['menu_id'])
+           ->where('stok', $riwayat['stok'])
+           ->where('tanggal', $riwayat['tanggal'])
+           ->limit(1)
+           ->delete();
 
         return redirect()->to(base_url('admin/riwayat-stok'))->with('success', 'Riwayat stok berhasil dihapus.');
     }

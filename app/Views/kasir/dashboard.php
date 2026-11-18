@@ -239,15 +239,23 @@ $jsonFlags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
                                 </span>
 
                                 <?php if (! $isLunas): ?>
+                                    <div class="flex items-center gap-2">
+                                        <?php if ($metodePembayaran === 'qris'): ?>
+                                            <button type="button" onclick="showQrModal()" class="inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-400/20 px-4 py-2.5 text-xs font-bold text-sky-400 transition" title="Lihat QRIS">
+                                                <i class="fa-solid fa-qrcode"></i>
+                                                QR
+                                            </button>
+                                        <?php endif; ?>
 
-                                    <form action="<?= base_url('kasir/telah-bayar/' . $p['kode_pesanan']) ?>" method="post" data-bayar-antrian="<?= esc($p['nomor_antrian'] ?? '-') ?>" data-bayar-nama="<?= esc($p['nama_pemesan'] ?? '-') ?>" onsubmit="return konfirmasiBayar(event, this)">
-                                        <?= csrf_field() ?>
+                                        <form action="<?= base_url('kasir/telah-bayar/' . $p['kode_pesanan']) ?>" method="post" data-bayar-antrian="<?= esc($p['nomor_antrian'] ?? '-') ?>" data-bayar-nama="<?= esc($p['nama_pemesan'] ?? '-') ?>" onsubmit="return konfirmasiBayar(event, this)">
+                                            <?= csrf_field() ?>
 
-                                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white transition">
-                                            <i class="fa-solid fa-money-bill-wave"></i>
-                                            Telah Bayar
-                                        </button>
-                                    </form>
+                                            <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white transition">
+                                                <i class="fa-solid fa-money-bill-wave"></i>
+                                                Telah Bayar
+                                            </button>
+                                        </form>
+                                    </div>
 
                                 <?php else: ?>
 
@@ -482,6 +490,19 @@ $jsonFlags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
                 <i class="fa-solid fa-circle-check mr-1"></i> Ya, Terima
             </button>
         </div>
+    </div>
+</div>
+
+<div id="qr-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
+    <div class="bg-slate-900 border border-white/10 rounded-[2rem] p-6 max-w-sm w-full text-center shadow-2xl relative">
+        <button onclick="closeQrModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-xl"></i></button>
+        <div class="w-16 h-16 rounded-full bg-sky-500/10 text-sky-400 flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-qrcode"></i></div>
+        <h3 class="text-lg font-bold text-white">Scan QRIS</h3>
+        <p class="text-xs text-slate-400 mt-1 mb-4">Silahkan kustomer melakukan scan QR.</p>
+        <div class="bg-white p-3 rounded-2xl mb-6 flex justify-center">
+            <img src="<?= base_url('assets/qr/qr.png') ?>" alt="QRIS" class="w-64 h-64 object-contain">
+        </div>
+        <button onclick="closeQrModal()" class="w-full py-3 rounded-xl bg-white/5 text-xs font-bold text-white">Tutup</button>
     </div>
 </div>
 
@@ -937,221 +958,71 @@ $jsonFlags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
             `;
         });
 
-        const catatanHTML = data.catatan ?
-            `
-                <div class="note">
-                    <strong>Catatan:</strong><br>
-                    ${escapeHTML(data.catatan)}
-                </div>
-            ` :
-            '';
-
+        const total = parseInt(data.total_harga ?? subtotal);
+        const catatanHTML = data.catatan ? `
+            <div class="note"><strong>Catatan:</strong><br>${escapeHTML(data.catatan)}</div>` : '';
+        const kasirLabel = escapeHTML(data.kasir_nama ?? data.kasir ?? '-') || '-';
+        const cashHTML = String(data.metode_pembayaran ?? '').toLowerCase() === 'tunai' && data.uang_bayar != null && data.uang_bayar !== '' ? `
+            <div class="row"><span class="label">Bayar</span><span class="value">Rp ${(parseInt(data.uang_bayar)||0).toLocaleString('id-ID')}</span></div>
+            <div class="row total-row"><span>Kembalian</span><span>Rp ${(parseInt(data.kembalian)||0).toLocaleString('id-ID')}</span></div>
+            <div class="line"></div>` : '';
         const html = `
             <!DOCTYPE html>
             <html lang="id">
             <head>
                 <meta charset="UTF-8">
                 <title>Struk ${escapeHTML(data.kode_pesanan)}</title>
-
                 <style>
-                    * {
-                        box-sizing: border-box;
-                    }
-
-                    body {
-                        margin: 0;
-                        padding: 18px;
-                        color: #111;
-                        background: #fff;
-                        font-family: Arial, sans-serif;
-                        font-size: 12px;
-                    }
-
-                    .receipt {
-                        width: 100%;
-                        max-width: 320px;
-                        margin: 0 auto;
-                    }
-
-                    .center {
-                        text-align: center;
-                    }
-
-                    .store {
-                        font-size: 20px;
-                        font-weight: 900;
-                        margin-bottom: 3px;
-                    }
-
-                    .subtitle {
-                        color: #555;
-                        font-size: 10px;
-                    }
-
-                    .queue {
-                        margin: 15px 0;
-                        padding: 12px;
-                        text-align: center;
-                        border: 2px dashed #111;
-                    }
-
-                    .queue span {
-                        display: block;
-                        font-size: 10px;
-                        font-weight: 700;
-                        text-transform: uppercase;
-                    }
-
-                    .queue strong {
-                        display: block;
-                        margin-top: 4px;
-                        font-size: 34px;
-                        font-weight: 900;
-                    }
-
-                    .line {
-                        margin: 12px 0;
-                        border-top: 1px dashed #777;
-                    }
-
-                    .row {
-                        display: flex;
-                        justify-content: space-between;
-                        gap: 12px;
-                        margin-bottom: 5px;
-                    }
-
-                    .label {
-                        color: #555;
-                    }
-
-                    .value {
-                        text-align: right;
-                        font-weight: 700;
-                    }
-
-                    .item {
-                        display: flex;
-                        justify-content: space-between;
-                        gap: 12px;
-                        margin-bottom: 9px;
-                    }
-
-                    .item strong {
-                        display: block;
-                        font-size: 11px;
-                    }
-
-                    .item small {
-                        display: block;
-                        margin-top: 2px;
-                        color: #666;
-                        font-size: 9px;
-                    }
-
-                    .note {
-                        margin-top: 10px;
-                        padding: 8px;
-                        border: 1px dashed #777;
-                        font-size: 10px;
-                    }
-
-                    .total-row {
-                        font-size: 15px;
-                        font-weight: 900;
-                    }
-
-                    .thanks {
-                        margin-top: 15px;
-                        text-align: center;
-                        color: #555;
-                        font-size: 10px;
-                        line-height: 1.5;
-                    }
-
-                    @media print {
-                        body {
-                            padding: 0;
-                        }
-
-                        @page {
-                            margin: 5mm;
-                        }
-                    }
+                    *{box-sizing:border-box;}
+                    body{margin:0;padding:5px;color:#111;background:#fff;font-family:monospace;font-size:10px;}
+                    .receipt{width:100%;max-width:180px;margin:0 auto;}
+                    .center{text-align:center;}
+                    .store{font-size:14px;font-weight:900;margin-bottom:3px;}
+                    .subtitle{color:#555;font-size:9px;}
+                    .queue{margin:5px 0;padding:5px;text-align:center;border:1px dashed #111;}
+                    .queue span{display:block;font-size:8px;font-weight:700;text-transform:uppercase;}
+                    .queue strong{display:block;margin-top:2px;font-size:24px;font-weight:900;}
+                    .line{margin:5px 0;border-top:1px dashed #777;}
+                    .row{display:flex;justify-content:space-between;gap:5px;margin-bottom:2px;}
+                    .label{color:#555;}
+                    .value{text-align:right;font-weight:700;}
+                    .item{display:flex;justify-content:space-between;gap:5px;margin-bottom:4px;}
+                    .item strong{display:block;font-size:10px;}
+                    .item small{display:block;color:#666;font-size:8px;}
+                    .note{margin-top:5px;padding:4px;border:1px dashed #777;font-size:8px;}
+                    .total-row{font-size:12px;font-weight:900;}
+                    .thanks{margin-top:10px;text-align:center;color:#555;font-size:8px;line-height:1.2;}
+                    @media print{@page{size:58mm auto;margin:0;}}
                 </style>
             </head>
-
             <body>
                 <div class="receipt">
-
                     <div class="center">
                         <div class="store">${escapeHTML(STORE_NAME)}</div>
                         <div class="subtitle">Struk Pesanan</div>
                     </div>
-
                     <div class="queue">
                         <span>Nomor Antrian</span>
-                        <strong>${escapeHTML(data.nomor_antrian)}</strong>
+                        <strong>${escapeHTML(data.nomor_antrian ?? '-')}</strong>
                     </div>
-
                     <div class="line"></div>
-
-                    <div class="row">
-                        <span class="label">Kode</span>
-                        <span class="value">${escapeHTML(data.kode_pesanan)}</span>
-                    </div>
-
-                    <div class="row">
-                        <span class="label">Nama</span>
-                        <span class="value">${escapeHTML(data.nama_pemesan)}</span>
-                    </div>
-
-                    <div class="row">
-                        <span class="label">Metode</span>
-                        <span class="value">${escapeHTML(data.metode_label)}</span>
-                    </div>
-
-                    <div class="row">
-                        <span class="label">Waktu</span>
-                        <span class="value">${escapeHTML(data.waktu)}</span>
-                    </div>
-
+                    <div class="row"><span class="label">Kode</span><span class="value">${escapeHTML(data.kode_pesanan)}</span></div>
+                    <div class="row"><span class="label">Nama</span><span class="value">${escapeHTML(data.nama_pemesan ?? '-')}</span></div>
+                    <div class="row"><span class="label">Metode</span><span class="value">${escapeHTML(data.metode_label ?? data.metode_pembayaran ?? '-')}</span></div>
+                    <div class="row"><span class="label">Waktu</span><span class="value">${escapeHTML(data.waktu ?? '-')}</span></div>
+                    <div class="row"><span class="label">Dilayani</span><span class="value">${kasirLabel}</span></div>
                     <div class="line"></div>
-
                     ${itemsHTML}
-
                     ${catatanHTML}
-
                     <div class="line"></div>
-
-                    <div class="row total-row">
-                        <span>Total</span>
-                        <span>Rp ${formatRupiah(data.total_harga)}</span>
-                    </div>
-
+                    <div class="row total-row"><span>Total</span><span>Rp ${total.toLocaleString('id-ID')}</span></div>
                     <div class="line"></div>
-
-                    <div class="thanks">
-                        Terima kasih.<br>
-                        Simpan struk ini sebagai bukti transaksi.
-                    </div>
-
+                    ${cashHTML}
+                    <div class="thanks">Terima kasih.<br>Simpan struk ini sebagai bukti transaksi.</div>
                 </div>
-
-                <script>
-                    window.onload = function () {
-                        setTimeout(function () {
-                            window.print();
-
-                            setTimeout(function () {
-                                window.close();
-                            }, 500);
-                        }, 250);
-                    };
-                <\/script>
+                <script>window.onload=function(){setTimeout(function(){window.print();setTimeout(function(){window.close();},500);},250);};<\/script>
             </body>
-            </html>
-        `;
+            </html>`;
 
         const printWindow = window.open('', '_blank', 'width=380,height=650');
 
@@ -1163,6 +1034,15 @@ $jsonFlags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
         printWindow.document.open();
         printWindow.document.write(html);
         printWindow.document.close();
+    }
+
+    function showQrModal() {
+        const m = document.getElementById('qr-modal');
+        m.classList.remove('hidden'); m.classList.add('flex');
+    }
+    function closeQrModal() {
+        const m = document.getElementById('qr-modal');
+        m.classList.add('hidden'); m.classList.remove('flex');
     }
 
     function renderOrderHTML(p) {
@@ -1212,15 +1092,22 @@ $jsonFlags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
         let actionHTML = '';
 
         if (!isLunas) {
-            actionHTML = `
-                <form action="<?= base_url('kasir/telah-bayar/') ?>${escapeHTML(p.kode_pesanan)}" method="post" data-bayar-antrian="${escapeHTML(p.nomor_antrian || '-')}" data-bayar-nama="${escapeHTML(p.nama_pemesan || '-')}" onsubmit="return konfirmasiBayar(event, this)">
-                    <input type="hidden" name="<?= csrf_token() ?>" value="${csrfHash}">
+            const qrBtn = (metode === 'qris') 
+                ? `<button type="button" onclick="showQrModal()" class="inline-flex items-center justify-center gap-2 rounded-2xl bg-sky-500/10 hover:bg-sky-500/20 border border-sky-400/20 px-4 py-2.5 text-xs font-bold text-sky-400 transition" title="Lihat QRIS"><i class="fa-solid fa-qrcode"></i> QR</button>` 
+                : '';
 
-                    <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white transition">
-                        <i class="fa-solid fa-money-bill-wave"></i>
-                        Telah Bayar
-                    </button>
-                </form>
+            actionHTML = `
+                <div class="flex items-center gap-2">
+                    ${qrBtn}
+                    <form action="<?= base_url('kasir/telah-bayar/') ?>${escapeHTML(p.kode_pesanan)}" method="post" data-bayar-antrian="${escapeHTML(p.nomor_antrian || '-')}" data-bayar-nama="${escapeHTML(p.nama_pemesan || '-')}" onsubmit="return konfirmasiBayar(event, this)">
+                        <input type="hidden" name="<?= csrf_token() ?>" value="${csrfHash}">
+
+                        <button type="submit" class="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-emerald-500 hover:bg-emerald-600 px-4 py-2.5 text-xs font-bold text-white transition">
+                            <i class="fa-solid fa-money-bill-wave"></i>
+                            Telah Bayar
+                        </button>
+                    </form>
+                </div>
             `;
 
         } else {

@@ -68,12 +68,16 @@ class Riwayat extends BaseController
         }
         unset($r);
 
+        $today = date('Y-m-d');
+        $defaultStartDate = $startDate ?: $today;
+        $defaultEndDate = $endDate ?: $today;
+
         $data = [
             'title'               => 'Riwayat Transaksi Admin',
             'riwayat'             => $riwayat,
-            'start_date'          => $startDate,
+            'start_date'          => $defaultStartDate,
             'start_time'          => $startTime,
-            'end_date'            => $endDate,
+            'end_date'            => $defaultEndDate,
             'end_time'            => $endTime,
             'total_pesanan'       => $totalPesanan,
             'total_pendapatan'    => $totalPendapatan,

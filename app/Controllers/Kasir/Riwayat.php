@@ -38,7 +38,6 @@ class Riwayat extends BaseController
                 $builder->where('tb_pesanan.updated_at <=', $endDateTime);
             }
         } else {
-            // Default: Hari ini (02:00 s/d 01:59 besok)
             $now = new \DateTime('now', new \DateTimeZone('Asia/Jakarta'));
             $currentHour = (int) $now->format('H');
             if ($currentHour < 2) {
@@ -63,12 +62,16 @@ class Riwayat extends BaseController
         }
         unset($r);
 
+        $today = date('Y-m-d');
+        $defaultStartDate = $startDate ?: $today;
+        $defaultEndDate = $endDate ?: $today;
+
         $data = [
             'title'            => 'Riwayat Transaksi',
             'riwayat'          => $riwayat,
-            'start_date'       => $startDate,
+            'start_date'       => $defaultStartDate,
             'start_time'       => $startTime,
-            'end_date'         => $endDate,
+            'end_date'         => $defaultEndDate,
             'end_time'         => $endTime,
             'total_pesanan'    => $totalPesanan,
             'total_pendapatan' => $totalPendapatan
