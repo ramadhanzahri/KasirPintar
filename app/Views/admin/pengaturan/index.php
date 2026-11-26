@@ -2,6 +2,16 @@
 
 <?= $this->section('content') ?>
 
+<?php
+$errors = session()->getFlashdata('errors') ?? [];
+
+$storeName        = old('store_name', $settings['store_name'] ?? 'ARZANA');
+$storeDescription = old('store_description', $settings['store_description'] ?? '');
+
+$storeLogo    = $settings['store_logo'] ?? '';
+$storeFavicon = $settings['store_favicon'] ?? '';
+?>
+
 <div class="mb-6 flex flex-col lg:flex-row lg:items-center lg:justify-between gap-4">
     <div>
         <h1 class="text-2xl font-extrabold text-white tracking-tight">Pengaturan Toko</h1>
@@ -10,14 +20,37 @@
         </p>
     </div>
 
-    <a href="#"
+    <a href="<?= base_url('admin/dashboard') ?>"
        class="inline-flex items-center gap-2 px-4 py-2.5 rounded-2xl bg-white/[.04] hover:bg-white/[.08] border border-white/10 text-sm text-slate-300 hover:text-white transition">
         <i class="fa-solid fa-arrow-left"></i>
         Kembali
     </a>
 </div>
 
-<form action="#" method="post" enctype="multipart/form-data">
+<?php if (session()->getFlashdata('success')): ?>
+    <div class="mb-5 flex items-center gap-3 rounded-2xl border border-emerald-400/20 bg-emerald-500/10 px-4 py-3 text-sm text-emerald-300">
+        <i class="fa-solid fa-circle-check"></i>
+        <span><?= esc(session()->getFlashdata('success')) ?></span>
+    </div>
+<?php endif; ?>
+
+<?php if (! empty($errors)): ?>
+    <div class="mb-5 rounded-2xl border border-red-400/20 bg-red-500/10 px-4 py-3 text-sm text-red-300">
+        <div class="flex items-center gap-2 font-semibold mb-2">
+            <i class="fa-solid fa-circle-exclamation"></i>
+            Ada data yang perlu diperbaiki
+        </div>
+        <ul class="list-disc pl-5 space-y-1">
+            <?php foreach ($errors as $error): ?>
+                <li><?= esc($error) ?></li>
+            <?php endforeach; ?>
+        </ul>
+    </div>
+<?php endif; ?>
+
+<form action="<?= base_url('admin/pengaturan/update') ?>" method="post" enctype="multipart/form-data">
+    <?= csrf_field() ?>
+
     <div class="grid grid-cols-1 xl:grid-cols-3 gap-6">
 
         <div class="xl:col-span-2 space-y-6">
@@ -37,8 +70,8 @@
                         </label>
                         <input type="text"
                                name="store_name"
-                               value="Nama Toko"
-                               placeholder="Contoh: Nama TOko"
+                               value="<?= esc($storeName) ?>"
+                               placeholder="Contoh: ARZANA"
                                class="w-full rounded-2xl bg-slate-950/60 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-400">
                     </div>
 
@@ -48,7 +81,7 @@
                         </label>
                         <input type="text"
                                name="store_description"
-                               value="Sistem Kasir Pintar Modern"
+                               value="<?= esc($storeDescription) ?>"
                                placeholder="Contoh: Menyajikan hidangan terbaik untuk Anda."
                                class="w-full rounded-2xl bg-slate-950/60 border border-white/10 px-4 py-3 text-sm text-white placeholder:text-slate-500 focus:outline-none focus:ring-2 focus:ring-sky-500/50 focus:border-sky-400">
                     </div>
@@ -68,7 +101,11 @@
                     <div class="rounded-3xl border border-white/10 bg-slate-950/40 p-5">
                         <div class="flex items-center gap-4 mb-4">
                             <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-                                <i class="fa-solid fa-store text-slate-500 text-2xl"></i>
+                                <?php if (! empty($storeLogo)): ?>
+                                    <img src="<?= base_url($storeLogo) ?>" alt="Logo Toko" class="w-full h-full object-contain p-2">
+                                <?php else: ?>
+                                    <i class="fa-solid fa-store text-slate-500 text-2xl"></i>
+                                <?php endif; ?>
                             </div>
                             <div>
                                 <p class="text-sm font-semibold text-white">Logo Toko</p>
@@ -88,7 +125,13 @@
                     <div class="rounded-3xl border border-white/10 bg-slate-950/40 p-5">
                         <div class="flex items-center gap-4 mb-4">
                             <div class="w-16 h-16 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-                                <i class="fa-solid fa-globe text-slate-500 text-2xl"></i>
+                                <?php if (! empty($storeFavicon)): ?>
+                                    <img src="<?= base_url($storeFavicon) ?>" alt="Favicon" class="w-full h-full object-contain p-2">
+                                <?php elseif (! empty($storeLogo)): ?>
+                                    <img src="<?= base_url($storeLogo) ?>" alt="Favicon" class="w-full h-full object-contain p-2">
+                                <?php else: ?>
+                                    <i class="fa-solid fa-globe text-slate-500 text-2xl"></i>
+                                <?php endif; ?>
                             </div>
                             <div>
                                 <p class="text-sm font-semibold text-white">Favicon</p>
@@ -117,24 +160,30 @@
                 <div class="rounded-3xl bg-slate-950/60 border border-white/10 p-5">
                     <div class="flex items-center gap-3">
                         <div class="w-14 h-14 rounded-2xl bg-white/5 border border-white/10 flex items-center justify-center overflow-hidden">
-                            <i class="fa-solid fa-store text-slate-500 text-xl"></i>
+                            <?php if (! empty($storeLogo)): ?>
+                                <img src="<?= base_url($storeLogo) ?>" alt="Logo" class="w-full h-full object-contain p-2">
+                            <?php else: ?>
+                                <i class="fa-solid fa-store text-slate-500 text-xl"></i>
+                            <?php endif; ?>
                         </div>
 
                         <div class="min-w-0">
-                            <p class="text-white font-bold truncate">Nama Toko</p>
-                            <p class="text-xs text-slate-400 truncate">Sistem Kasir Pintar Modern</p>
+                            <p class="text-white font-bold truncate"><?= esc($storeName) ?></p>
+                            <p class="text-xs text-slate-400 truncate"><?= esc($storeDescription ?: 'Deskripsi toko belum diisi') ?></p>
                         </div>
                     </div>
+
+
                 </div>
 
                 <div class="mt-5 flex flex-col gap-3">
-                    <button type="button"
+                    <button type="submit"
                             class="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-gradient-to-r from-sky-500 to-purple-600 px-5 py-3 text-sm font-bold text-white shadow-glow hover:opacity-95 transition">
                         <i class="fa-solid fa-floppy-disk"></i>
                         Simpan Pengaturan
                     </button>
 
-                    <a href="#"
+                    <a href="<?= base_url('admin/dashboard') ?>"
                        class="w-full inline-flex items-center justify-center gap-2 rounded-2xl bg-white/[.04] hover:bg-white/[.08] border border-white/10 px-5 py-3 text-sm font-semibold text-slate-300 hover:text-white transition">
                         Batal
                     </a>

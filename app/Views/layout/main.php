@@ -276,7 +276,7 @@ $isActive = static function (string $path) {
                             <span class="nav-icon w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-slate-300 transition">
                                 <i class="fa-solid fa-users-gear"></i>
                             </span>
-                            <span>Kelola User</span>
+                            <span>Kelola Akun</span>
                         </a>
                     </div>
                 </div>
@@ -292,7 +292,7 @@ $isActive = static function (string $path) {
                             <span class="nav-icon w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-slate-300 transition">
                                 <i class="fa-solid fa-user-gear"></i>
                             </span>
-                            <span>Profil Saya</span>
+                            <span>Data Profil</span>
                         </a>
 
                         <a href="<?= base_url('admin/pengaturan') ?>"
@@ -300,7 +300,7 @@ $isActive = static function (string $path) {
                             <span class="nav-icon w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-slate-300 transition">
                                 <i class="fa-solid fa-store"></i>
                             </span>
-                            <span>Pengaturan Toko</span>
+                            <span>Profil Toko</span>
                         </a>
                     </div>
                 </div>
@@ -342,7 +342,7 @@ $isActive = static function (string $path) {
                             <span class="nav-icon w-9 h-9 rounded-xl bg-white/5 flex items-center justify-center text-slate-300 transition">
                                 <i class="fa-solid fa-gear"></i>
                             </span>
-                            <span>Pengaturan Akun</span>
+                            <span>Data Profil</span>
                         </a>
                     </div>
                 </div>

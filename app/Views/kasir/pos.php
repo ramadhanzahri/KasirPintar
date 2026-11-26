@@ -67,7 +67,7 @@ $receiptData = static function (array $p) use ($formatMetode): array {
         <div class="relative flex flex-col md:flex-row md:items-center md:justify-between gap-4">
             <div>
                 <h1 class="text-xl lg:text-2xl font-extrabold tracking-tight text-white flex items-center gap-3">
-                    <span id="header-title">POS Pintar</span>
+                    <span id="header-title">Pesanan</span>
                     <span id="live-indicator" class="hidden inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/10 border border-emerald-400/20 text-emerald-300 text-[10px] font-bold uppercase tracking-wider">
                         <span class="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse"></span> Live
                     </span>
@@ -360,7 +360,7 @@ $receiptData = static function (array $p) use ($formatMetode): array {
             document.getElementById('header-desc').textContent = 'Pantau dan konfirmasi pembayaran antrean.';
             document.getElementById('live-indicator').classList.remove('hidden');
         } else {
-            document.getElementById('header-title').textContent = 'POS Pintar';
+            document.getElementById('header-title').textContent = 'Pesanan';
             document.getElementById('header-desc').textContent = 'Pilih menu dan buat pesanan pelanggan.';
             document.getElementById('live-indicator').classList.add('hidden');
         }

@@ -17,7 +17,7 @@
                     </div>
 
                     <h1 class="text-2xl lg:text-4xl font-extrabold tracking-tight text-white">
-                        Manajemen Akun
+                        Kelola Akun
                     </h1>
 
                     <p class="text-sm lg:text-base text-slate-400 mt-2 max-w-2xl">
