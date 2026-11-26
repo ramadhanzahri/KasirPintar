@@ -316,13 +316,13 @@ $receiptData = static function (array $p) use ($formatMetode): array {
 </div>
 
 <div id="qr-modal" class="fixed inset-0 z-[100] hidden items-center justify-center bg-black/80 backdrop-blur-sm p-4">
-    <div class="bg-slate-900 border border-white/10 rounded-[2rem] p-6 max-w-sm w-full text-center shadow-2xl relative">
-        <button onclick="closeQrModal()" class="absolute top-4 right-4 text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-xl"></i></button>
-        <div class="w-16 h-16 rounded-full bg-sky-500/10 text-sky-400 flex items-center justify-center mx-auto mb-4 text-2xl"><i class="fa-solid fa-qrcode"></i></div>
-        <h3 class="text-lg font-bold text-white">Scan QRIS</h3>
-        <p class="text-xs text-slate-400 mt-1 mb-4">Silahkan kustomer melakukan scan QR.</p>
-        <div class="bg-white p-3 rounded-2xl mb-6 flex justify-center">
-            <img src="<?= base_url('assets/qr/qr.png') ?>" alt="QRIS" class="w-64 h-64 object-contain">
+    <div class="bg-slate-900 border border-white/10 rounded-[2rem] p-8 max-w-md w-full text-center shadow-2xl relative">
+        <button onclick="closeQrModal()" class="absolute top-6 right-6 text-slate-400 hover:text-white transition"><i class="fa-solid fa-xmark text-2xl"></i></button>
+        <div class="w-20 h-20 rounded-full bg-sky-500/10 text-sky-400 flex items-center justify-center mx-auto mb-6 text-3xl"><i class="fa-solid fa-qrcode"></i></div>
+        <h3 class="text-2xl font-bold text-white">Scan QRIS</h3>
+        <p class="text-sm text-slate-400 mt-2 mb-6">Silahkan kustomer melakukan scan QR.</p>
+        <div class="bg-white p-4 rounded-3xl mb-8 flex justify-center shadow-inner">
+            <img src="<?= base_url('assets/qr/qr.png') ?>" alt="QRIS" class="w-80 h-80 object-contain">
         </div>
         <button onclick="closeQrModal()" class="w-full py-3 rounded-xl bg-white/5 text-xs font-bold text-white">Tutup</button>
     </div>
@@ -711,25 +711,28 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                 <title>Struk ${posEscapeStruk(data.kode_pesanan)}</title>
                 <style>
                     *{box-sizing:border-box;}
-                    body{margin:0;padding:5px;color:#111;background:#fff;font-family:monospace;font-size:10px;}
-                    .receipt{width:100%;max-width:180px;margin:0 auto;}
+                    body{margin:0;padding:0;color:#111;background:#fff;font-family:monospace;font-size:9.5px;}
+                    .receipt{width:44mm;max-width:44mm;margin:0;padding:0 1.5mm;word-break:break-word;overflow-wrap:break-word;}
                     .center{text-align:center;}
-                    .store{font-size:14px;font-weight:900;margin-bottom:3px;}
+                    .store{font-size:13px;font-weight:900;margin-bottom:3px;}
                     .subtitle{color:#555;font-size:9px;}
-                    .queue{margin:5px 0;padding:5px;text-align:center;border:1px dashed #111;}
+                    .queue{margin:5px 0;padding:4px;text-align:center;border:1px dashed #111;}
                     .queue span{display:block;font-size:8px;font-weight:700;text-transform:uppercase;}
-                    .queue strong{display:block;margin-top:2px;font-size:24px;font-weight:900;}
+                    .queue strong{display:block;margin-top:2px;font-size:22px;font-weight:900;}
                     .line{margin:5px 0;border-top:1px dashed #777;}
-                    .row{display:flex;justify-content:space-between;gap:5px;margin-bottom:2px;}
-                    .label{color:#555;}
-                    .value{text-align:right;font-weight:700;}
-                    .item{display:flex;justify-content:space-between;gap:5px;margin-bottom:4px;}
-                    .item strong{display:block;font-size:10px;}
+                    .row{display:flex;justify-content:space-between;gap:4px;margin-bottom:2px;}
+                    .label{color:#555;flex-shrink:0;}
+                    .value{text-align:right;font-weight:700;word-break:break-word;}
+                    .item{display:flex;justify-content:space-between;gap:4px;margin-bottom:4px;}
+                    .item strong{display:block;font-size:9.5px;word-break:break-word;}
                     .item small{display:block;color:#666;font-size:8px;}
-                    .note{margin-top:5px;padding:4px;border:1px dashed #777;font-size:8px;}
-                    .total-row{font-size:12px;font-weight:900;}
+                    .item span{flex-shrink:0;text-align:right;}
+                    .note{margin-top:5px;padding:4px;border:1px dashed #777;font-size:8px;word-break:break-word;}
+                    .total-row{font-size:11px;font-weight:900;}
                     .thanks{margin-top:10px;text-align:center;color:#555;font-size:8px;line-height:1.2;}
-                    @media print{@page{size:58mm auto;margin:0;}}
+                    .cut-line{margin-top:8px;text-align:center;font-size:10px;font-weight:700;color:#000;}
+                    .paper-feed{text-align:center;font-size:6px;color:#000;line-height:1.4;}
+                    @media print{@page{margin:0;}body{width:44mm;margin:0;padding:0;}.receipt{width:44mm;padding:0 1.5mm;}}
                 </style>
             </head>
             <body>
@@ -756,6 +759,11 @@ $receiptData = static function (array $p) use ($formatMetode): array {
                     <div class="line"></div>
                     ${cashHTML}
                     <div class="thanks">Terima kasih.<br>Simpan struk ini sebagai bukti transaksi.</div>
+                    <div class="cut-line">- - - - - - - - - -</div>
+                    <div class="paper-feed">
+                        <br><br><br><br><br><br><br><br><br>
+                        .
+                    </div>
                 </div>
                 <script>window.onload=function(){setTimeout(function(){window.print();setTimeout(function(){window.close();},500);},250);};<\/script>
             </body>

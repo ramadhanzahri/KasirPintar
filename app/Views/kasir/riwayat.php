@@ -474,125 +474,35 @@ $jsonFlags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
             <head>
                 <meta charset="UTF-8">
                 <title>Struk ${escapeHTML(data.kode_pesanan)}</title>
-                <style>
-                    * { box-sizing: border-box; }
-
-                    body {
-                        margin: 0;
-                        background: #fff;
-                        color: #000;
-                        font-family: Arial, sans-serif;
-                        font-size: 12px;
-                    }
-
-                    .receipt {
-                        width: 58mm;
-                        padding: 10px;
-                        margin: 0 auto;
-                    }
-
-                    .center { text-align: center; }
-
-                    .store {
-                        font-size: 15px;
-                        font-weight: 800;
-                        text-transform: uppercase;
-                        margin-bottom: 3px;
-                    }
-
-                    .small {
-                        font-size: 10px;
-                        line-height: 1.4;
-                    }
-
-                    .line {
-                        border-top: 1px dashed #000;
-                        margin: 8px 0;
-                    }
-
-                    .row {
-                        display: flex;
-                        justify-content: space-between;
-                        gap: 8px;
-                        margin: 3px 0;
-                    }
-
-                    .label { color: #333; }
-
-                    .value {
-                        font-weight: 700;
-                        text-align: right;
-                    }
-
-                    .item {
-                        display: flex;
-                        justify-content: space-between;
-                        gap: 8px;
-                        margin-bottom: 7px;
-                    }
-
-                    .item-name {
-                        font-weight: 700;
-                        max-width: 34mm;
-                    }
-
-                    .item-price {
-                        font-weight: 700;
-                        white-space: nowrap;
-                    }
-
-                    .muted {
-                        color: #444;
-                        font-size: 10px;
-                        margin-top: 2px;
-                    }
-
-                    .note {
-                        font-size: 10px;
-                        margin-top: 2px;
-                        color: #111;
-                        font-style: italic;
-                    }
-
-                    .catatan {
-                        border: 1px dashed #000;
-                        padding: 5px;
-                        margin-top: 7px;
-                        font-size: 10px;
-                    }
-
-                    .total-row {
-                        font-size: 14px;
-                        font-weight: 800;
-                    }
-
-                    .empty-item {
-                        font-size: 10px;
-                        text-align: center;
-                        color: #444;
-                        padding: 6px 0;
-                    }
-
-                    .thanks {
-                        margin-top: 10px;
-                        text-align: center;
-                        font-size: 10px;
-                        line-height: 1.4;
-                    }
-
-                    @media print {
-                        @page {
-                            size: 58mm auto;
-                            margin: 0;
+                    <style>
+                        * { box-sizing: border-box; -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+                        body { margin: 0; padding: 0; background: #fff; color: #000; font-family: monospace; font-size: 9.5px; }
+                        .receipt { width: 44mm; max-width: 44mm; margin: 0; padding: 0 1.5mm; word-break: break-word; overflow-wrap: break-word; }
+                        .center { text-align: center; }
+                        .store { font-size: 13px; font-weight: 800; text-transform: uppercase; margin-bottom: 3px; }
+                        .small { font-size: 9px; line-height: 1.4; }
+                        .line { border-top: 1px dashed #000; margin: 6px 0; }
+                        .row { display: flex; justify-content: space-between; gap: 4px; margin: 2px 0; }
+                        .label { color: #333; flex-shrink: 0; }
+                        .value { font-weight: 700; text-align: right; word-break: break-word; }
+                        .item { display: flex; justify-content: space-between; gap: 4px; margin-bottom: 4px; }
+                        .item-name { font-weight: 700; word-break: break-word; }
+                        .item-price { font-weight: 700; white-space: nowrap; flex-shrink: 0; text-align: right; }
+                        .muted { color: #444; font-size: 8px; margin-top: 1px; }
+                        .note { font-size: 8px; font-style: italic; color: #111; word-break: break-word; }
+                        .total-row { font-size: 11px; font-weight: 800; }
+                        .thanks { margin-top: 10px; text-align: center; font-size: 8px; line-height: 1.2; }
+                        .cut-line { margin-top: 8px; text-align: center; font-size: 10px; font-weight: 700; color: #000; }
+                        .paper-feed { text-align: center; font-size: 6px; color: #000; line-height: 1.4; }
+                        @media print {
+                            @page { margin: 0; }
+                            body { width: 44mm; padding: 0; margin: 0; }
+                            .receipt { width: 44mm; padding: 0 1.5mm; }
                         }
-
-                        body { width: 58mm; }
-                        .receipt { width: 58mm; }
-                    }
-                </style>
-            </head>
-            <body>
-                <div class="receipt">
+                    </style>
+                </head>
+                <body>
+                    <div class="receipt">
                     <div class="center">
                         <div class="store">${escapeHTML(STORE_NAME)}</div>
                         <div class="small">Struk Transaksi</div>
@@ -640,6 +550,11 @@ $jsonFlags = JSON_HEX_TAG | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_HEX_AMP;
                         Terima kasih.<br>
                         Pesanan telah selesai.<br>
                         Simpan struk ini sebagai bukti transaksi.
+                    </div>
+                    <div class="cut-line">- - - - - - - - - -</div>
+                    <div class="paper-feed">
+                        <br><br><br><br><br><br><br><br><br>
+                        .
                     </div>
                 </div>
 

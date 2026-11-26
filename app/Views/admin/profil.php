@@ -9,6 +9,33 @@
         <p class="text-sm text-slate-400 mt-1">Kelola profil dan keamanan akun Superadmin Anda</p>
     </div>
 
+    <?php if (session()->getFlashdata('success')): ?>
+        <div class="p-4 rounded-2xl bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 flex items-center gap-3">
+            <i class="fa-solid fa-circle-check text-xl"></i>
+            <div><?= session()->getFlashdata('success') ?></div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('error')): ?>
+        <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 flex items-center gap-3">
+            <i class="fa-solid fa-circle-xmark text-xl"></i>
+            <div><?= session()->getFlashdata('error') ?></div>
+        </div>
+    <?php endif; ?>
+
+    <?php if (session()->getFlashdata('errors')): ?>
+        <div class="p-4 rounded-2xl bg-rose-500/10 border border-rose-500/20 text-rose-400 space-y-1">
+            <div class="font-semibold flex items-center gap-2">
+                <i class="fa-solid fa-triangle-exclamation"></i> Terjadi Kesalahan:
+            </div>
+            <ul class="list-disc list-inside text-sm space-y-0.5 pl-2">
+                <?php foreach (session()->getFlashdata('errors') as $err): ?>
+                    <li><?= esc($err) ?></li>
+                <?php endforeach; ?>
+            </ul>
+        </div>
+    <?php endif; ?>
+
     <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
         <!-- Profil Section -->
         <div class="glass-card rounded-3xl p-6 lg:p-8 relative overflow-hidden h-fit">
@@ -19,14 +46,16 @@
                 <h2 class="text-lg font-bold text-white">Profil Superadmin</h2>
             </div>
 
-            <form action="#" method="post" class="space-y-6">
+            <form action="<?= base_url('admin/pengaturan/akun/profile') ?>" method="post" class="space-y-6">
+                <?= csrf_field() ?>
+
                 <div>
                     <label for="nama_lengkap" class="block text-sm font-medium text-slate-300 mb-2">Nama Lengkap</label>
                     <div class="relative">
                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
                             <i class="fa-solid fa-id-card"></i>
                         </span>
-                        <input type="text" id="nama_lengkap" name="nama_lengkap" value="Super Admin" required
+                        <input type="text" id="nama_lengkap" name="nama_lengkap" value="<?= esc($user['nama_lengkap'] ?? '') ?>" required
                             class="w-full pl-11 pr-4 py-3 rounded-2xl bg-dark-900 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition">
                     </div>
                 </div>
@@ -37,7 +66,7 @@
                         <span class="absolute inset-y-0 left-0 flex items-center pl-4 text-slate-400">
                             <i class="fa-solid fa-at"></i>
                         </span>
-                        <input type="text" id="username" name="username" value="superadmin" required
+                        <input type="text" id="username" name="username" value="<?= esc($user['username'] ?? '') ?>" required
                             class="w-full pl-11 pr-4 py-3 rounded-2xl bg-dark-900 border border-white/10 text-white placeholder-slate-500 focus:outline-none focus:border-neon-blue focus:ring-1 focus:ring-neon-blue transition">
                     </div>
                 </div>
@@ -61,7 +90,9 @@
                 <h2 class="text-lg font-bold text-white">Ganti Password</h2>
             </div>
 
-            <form action="#" method="post" class="space-y-5">
+            <form action="<?= base_url('admin/pengaturan/akun/password') ?>" method="post" class="space-y-5">
+                <?= csrf_field() ?>
+
                 <div>
                     <label for="old_password" class="block text-sm font-medium text-slate-300 mb-2">Password Saat Ini</label>
                     <div class="relative">
@@ -127,7 +158,7 @@
     function togglePassword(inputId) {
         const input = document.getElementById(inputId);
         const icon = document.getElementById('eye-' + inputId);
-
+        
         if (input.type === 'password') {
             input.type = 'text';
             icon.classList.remove('fa-eye');
